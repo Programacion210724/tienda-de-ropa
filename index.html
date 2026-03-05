@@ -1,0 +1,1218 @@
+﻿
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tienda de Ropa - Nombre del Negocio</title>
+  <style>
+    /* Prevenir scroll horizontal */
+    html, body {
+      overflow-x: hidden;
+      max-width: 100%;
+    }
+    
+    * {
+      box-sizing: border-box;
+    }
+    
+    :root{
+      --brand: #7c5cff;
+      --text: #e4e4e7;
+      --muted: #a1a1aa;
+      --border: #27272a;
+      --bg: #0f0f10;
+      --radius: 12px;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,.1), 0 2px 4px -1px rgba(0,0,0,.06);
+      --radius: 16px;
+      --max: 1100px;
+    }
+    body{
+      margin: 0;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(124,92,255,.25), transparent 55%),
+                  radial-gradient(1000px 500px at 90% 20%, rgba(49,210,247,.18), transparent 60%),
+                  var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+    }
+    a{ color: inherit; text-decoration: none; }
+    img{ max-width: 100%; display: block; }
+    .container{
+      width: 100%;
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 18px;
+    }
+    /* Header */
+    header{
+      position: sticky;
+      top: 0;
+      backdrop-filter: blur(10px);
+      background: rgba(11,15,25,.70);
+      border-bottom: 1px solid var(--border);
+      z-index: 50;
+    }
+    .topbar{
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 0;
+      gap: 14px;
+    }
+    .brand{
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 800;
+      letter-spacing: .2px;
+    }
+    .logo{
+      width: 38px;
+      height: 38px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, var(--brand), var(--brand2));
+      box-shadow: var(--shadow);
+    }
+    nav{
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+    nav a{
+      padding: 10px 12px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      color: var(--muted);
+    }
+    nav a:hover{
+      border-color: var(--border);
+      color: var(--text);
+      background: rgba(255,255,255,.04);
+    }
+    /* Hero */
+    .hero{
+      padding: 46px 0 28px;
+    }
+    .hero-grid{
+      display: grid;
+      grid-template-columns: 1.2fr .8fr;
+      gap: 18px;
+      align-items: stretch;
+    }
+    .hero-card{
+      border: 1px solid var(--border);
+      background: rgba(18,26,42,.75);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: 22px;
+    }
+    .badge{
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: rgba(124,92,255,.12);
+      border: 1px solid rgba(124,92,255,.30);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+    }
+    h1{
+      margin: 12px 0 8px;
+      font-size: clamp(28px, 3.2vw, 44px);
+      line-height: 1.1;
+      letter-spacing: -.3px;
+    }
+    .hero p{
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+      max-width: 62ch;
+    }
+    .actions{
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+    .btn{
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      font-weight: 700;
+      cursor: pointer;
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+    }
+    .btn:hover{ background: rgba(255,255,255,.07); }
+    .btn-primary{
+      border-color: rgba(124,92,255,.50);
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(49,210,247,.55));
+    }
+    .btn-primary:hover{
+      filter: brightness(1.05);
+    }
+    .hero-side{
+      display: grid;
+      gap: 12px;
+    }
+    .mini{
+      padding: 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      background: rgba(18,26,42,.55);
+    }
+    .mini strong{ display:block; margin-bottom: 6px; }
+    .mini span{ color: var(--muted); }
+    /* Sections */
+    section{
+      padding: 22px 0;
+    }
+    .section-title{
+      display:flex;
+      align-items:end;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+    .section-title h2{
+      margin: 0;
+      font-size: 22px;
+      letter-spacing: -.2px;
+    }
+    .section-title p{
+      margin: 0;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    /* Cards grid */
+    .grid{
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+    }
+    .card{
+      border: 1px solid var(--border);
+      background: rgba(18,26,42,.55);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .card .img{
+      height: 170px;
+      background:
+        linear-gradient(135deg, rgba(124,92,255,.25), rgba(49,210,247,.15)),
+        linear-gradient(0deg, rgba(255,255,255,.06), rgba(255,255,255,0));
+      border-bottom: 1px solid var(--border);
+    }
+    .card .content{
+      padding: 14px;
+    }
+    .price{
+      display:flex;
+      align-items:center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .tag{
+      font-size: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+    }
+    .map{
+      margin-top: 12px;
+      border-radius: 14px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      height: 240px;
+      background: rgba(255,255,255,.02);
+    }
+    .map iframe{
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+    .alert{
+      display: none;
+      margin: 12px 0 0;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      font-weight: 700;
+    }
+    .alert-success{
+      border-color: rgba(49,210,247,.45);
+      background: rgba(49,210,247,.10);
+    }
+    .alert-error{
+      border-color: rgba(255,97,97,.45);
+      background: rgba(255,97,97,.10);
+    }
+    /* Contact */
+    .contact{
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    form{
+      border: 1px solid var(--border);
+      background: rgba(18,26,42,.55);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+    }
+    label{ display:block; font-weight: 700; margin: 10px 0 6px; }
+    input, textarea, select{
+      width: 100%;
+      padding: 12px 12px;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      outline: none;
+    }
+    input:focus, textarea:focus, select:focus{
+      border-color: rgba(124,92,255,.55);
+      box-shadow: 0 0 0 4px rgba(124,92,255,.18);
+    }
+    select option {
+      background: rgba(18,26,42,.95);
+      color: var(--text);
+      padding: 8px;
+    }
+    /* Carrusel */
+    .carousel-container {
+      position: relative;
+      width: 100%;
+      max-width: 100vw;
+      margin: -40px 0 0 0;
+      border-radius: 0;
+      overflow: hidden;
+      border: none;
+    }
+    .carousel-large {
+      max-width: 100vw;
+      width: calc(100vw - 20px);
+      height: 650px;
+      margin: -25px -250px !important;
+      border-radius: 0;
+      border: none;
+      overflow-x: hidden;
+    }
+    .carousel-slide {
+      position: relative;
+      width: 100%;
+      height: 400px;
+    }
+    .carousel-large .carousel-slide {
+      height: 650px;
+    }
+    .carousel-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 0.5s ease-in-out;
+    }
+    .carousel-image.active {
+      opacity: 1;
+    }
+    /* Overlay del carrusel */
+    .carousel-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0.3) 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 40px 22px;
+      color: white;
+      z-index: 1;
+    }
+    .carousel-content {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .carousel-content .badge {
+      background: rgba(124,92,255,.8);
+      border-color: rgba(124,92,255,.5);
+      color: white;
+      margin-bottom: 20px;
+    }
+    .carousel-content h1 {
+      color: white;
+      font-size: clamp(32px, 4vw, 48px);
+      margin-bottom: 16px;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+    }
+    .carousel-content p {
+      color: rgba(255,255,255,0.9);
+      font-size: 18px;
+      margin-bottom: 24px;
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
+    }
+    .carousel-content .btn {
+      background: rgba(255,255,255,0.2);
+      border-color: rgba(255,255,255,0.3);
+      color: white;
+      backdrop-filter: blur(10px);
+    }
+    .carousel-content .btn-primary {
+      background: linear-gradient(135deg, rgba(124,92,255,.95), rgba(49,210,247,.55));
+      border-color: rgba(124,92,255,.5);
+    }
+    /* Servicios en el carrusel */
+    .carousel-services {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+    .service-item {
+      background: rgba(0,0,0,0.6);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.2);
+      border-radius: 12px;
+      padding: 16px 20px;
+      text-align: center;
+      min-width: 180px;
+      transition: all 0.3s ease;
+    }
+    .service-item:hover {
+      background: rgba(0,0,0,0.8);
+      transform: translateY(-2px);
+      border-color: rgba(124,92,255,0.5);
+    }
+    .service-item strong {
+      display: block;
+      margin-bottom: 8px;
+      font-size: 16px;
+      color: white;
+    }
+    .service-item span {
+      color: rgba(255,255,255,0.8);
+      font-size: 14px;
+    }
+    .carousel-indicators {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 8px;
+      z-index: 2;
+    }
+    .indicator {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: rgba(255,255,255,.3);
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+    .indicator.active {
+      background: var(--brand);
+      transform: scale(1.2);
+    }
+    .carousel-btn {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      background: rgba(0,0,0,.5);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      z-index: 2;
+    }
+    .carousel-btn:hover {
+      background: rgba(0,0,0,.7);
+      transform: translateY(-50%) scale(1.1);
+    }
+    .prev-btn {
+      left: 10px;
+    }
+    .next-btn {
+      right: 10px;
+    }
+    /* WhatsApp Flotante */
+    .whatsapp-float {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 60px;
+      background: #25D366;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 30px;
+      text-decoration: none;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+      transition: all 0.3s ease;
+      z-index: 1000;
+      border: 3px solid white;
+    }
+    .whatsapp-float:hover {
+      transform: scale(1.1);
+      box-shadow: 0 6px 20px rgba(37, 211, 102, 0.6);
+      background: #128C7E;
+    }
+    .whatsapp-float:active {
+      transform: scale(0.95);
+    }
+    /* Responsive para móvil */
+    @media (max-width: 768px) {
+      .whatsapp-float {
+        width: 50px;
+        height: 50px;
+        font-size: 24px;
+        bottom: 15px;
+        right: 15px;
+      }
+      .carousel-large {
+        height: 700px;
+      }
+      .carousel-large .carousel-slide {
+        height: 700px;
+      }
+      .carousel-overlay {
+        padding: 20px;
+      }
+      .carousel-content h1 {
+        font-size: clamp(24px, 6vw, 32px);
+      }
+      .carousel-content p {
+        font-size: 16px;
+      }
+      .carousel-services {
+        gap: 12px;
+      }
+      .service-item {
+        min-width: 140px;
+        padding: 12px 16px;
+      }
+      .service-item strong {
+        font-size: 14px;
+      }
+      .service-item span {
+        font-size: 12px;
+      }
+    }
+    /* Carrusel del catálogo */
+    .catalog-section {
+      display: flex;
+      flex-direction: column;
+      gap: 30px;
+    }
+    .catalog-row {
+      border: 1px solid var(--border);
+      background: rgba(18,26,42,.55);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+    }
+    .catalog-row h3 {
+      margin: 0 0 15px 0;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+    }
+    .catalog-row .carousel-wrapper {
+      position: relative;
+      width: 100%;
+      overflow: hidden;
+    }
+    .catalog-row .catalog-carousel {
+      overflow: hidden;
+      border-radius: var(--radius);
+    }
+    .catalog-row .catalog-track {
+      display: flex;
+      transition: transform 0.5s ease-in-out;
+    }
+    .catalog-row .catalog-slide {
+      min-width: 100%;
+    }
+    .catalog-row .catalog-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 14px;
+      min-width: 100%;
+      padding: 0;
+    }
+    .catalog-row .row-prev {
+      position: absolute;
+      left: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+    .catalog-row .row-next {
+      position: absolute;
+      right: -15px;
+      top: 50%;
+      transform: translateY(-50%);
+      z-index: 10;
+    }
+    footer{
+      border-top: 1px solid var(--border);
+      color: var(--muted);
+      padding: 18px 0 40px;
+      margin-top: 10px;
+    }
+    /* Responsive */
+    @media (max-width: 900px){
+      .hero-grid{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns: 1fr; }
+      .contact{ grid-template-columns: 1fr; }
+      nav{ justify-content: flex-start; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container topbar">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <div>Nombre del Negocio</div>
+          <div style="color: var(--muted); font-weight: 600; font-size: 13px;">Ropa y Accesorios</div>
+        </div>
+      </div>
+      <nav>
+        <a href="#inicio">Inicio</a>
+        <a href="#catalogo">Catálogo</a>
+        <a href="#ofertas">Ofertas</a>
+        <a href="#contacto">Contacto</a>
+      </nav>
+    </div>
+  </header>
+  <main>
+    <section class="hero" id="inicio">
+      <div class="container hero-grid">
+        <div class="hero-card">
+          <!-- Carrusel de imágenes grande -->
+          <div class="carousel-container carousel-large">
+            <div class="carousel-slide">
+              <img src="https://picsum.photos/seed/ropa1/800/500.jpg" alt="Ropa moderna" class="carousel-image active">
+              <img src="https://picsum.photos/seed/ropa2/800/500.jpg" alt="Estilo urbano" class="carousel-image">
+              <img src="https://picsum.photos/seed/ropa3/800/500.jpg" alt="Moda casual" class="carousel-image">
+              <img src="https://picsum.photos/seed/ropa4/800/500.jpg" alt="Tendencias 2026" class="carousel-image">
+            </div>
+            
+            <!-- Contenido superpuesto en el carrusel -->
+            <div class="carousel-overlay">
+              <div class="carousel-content">
+                <span class="badge">Nueva colección 2026</span>
+                <h1>Viste con estilo, compra con confianza.</h1>
+                <p>
+                  Descubre nuestras últimas colecciones con diseños únicos y calidad superior.
+                </p>
+                <div class="actions">
+                  <a class="btn btn-primary" href="#catalogo">Ver catálogo</a>
+                  <a class="btn" href="#contacto">Pedir por WhatsApp</a>
+                </div>
+              </div>
+              
+              <!-- Información de servicios -->
+              <div class="carousel-services">
+                <div class="service-item">
+                  <strong>🚚 Envíos</strong>
+                  <span>Envíos a domicilio / punto de entrega.</span>
+                </div>
+                <div class="service-item">
+                  <strong>💳 Pagos</strong>
+                  <span>Efectivo, transferencia y más.</span>
+                </div>
+                <div class="service-item">
+                  <strong>🕐 Horarios</strong>
+                  <span>Lun - Sáb: 9am a 7pm.</span>
+                </div>
+              </div>
+            </div>
+            
+            <!-- Indicadores del carrusel -->
+            <div class="carousel-indicators">
+              <span class="indicator active" data-slide="0"></span>
+              <span class="indicator" data-slide="1"></span>
+              <span class="indicator" data-slide="2"></span>
+              <span class="indicator" data-slide="3"></span>
+            </div>
+            
+            <!-- Flechas de navegación -->
+            <button class="carousel-btn prev-btn" onclick="changeSlide(-1)">❮</button>
+            <button class="carousel-btn next-btn" onclick="changeSlide(1)">❯</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="ofertas">
+      <div class="container">
+        <div class="section-title">
+          <h2>Ofertas Especiales</h2>
+          <p>Promociones que no te puedes perder</p>
+        </div>
+        <div class="catalog-row">
+          <h3>Ofertas</h3>
+          <div class="carousel-wrapper">
+            <button class="carousel-btn row-prev" onclick="changeRowSlide(3, -1)">❮</button>
+            <div class="catalog-carousel">
+              <div class="catalog-track" id="row-3">
+                <div class="catalog-slide">
+                  <div class="grid catalog-grid">
+                    <article class="card">
+                      <img src="img/Jeans slim.jpg" alt="Jeans Slim" />
+                      <div class="content">
+                        <strong>2x1 en básicos</strong>
+                        <div class="price">
+                          <span>Por tiempo limitado</span>
+                          <span class="tag">Promo</span>
+                        </div>
+                      </div>
+                    </article>
+                    <article class="card">
+                      <img src="img/Pantalón cargo.jpg" alt="Pantalón Cargo" />
+                      <div class="content">
+                        <strong>-30% en sudaderas</strong>
+                        <div class="price">
+                          <span>Solo esta semana</span>
+                          <span class="tag">Promo</span>
+                        </div>
+                      </div>
+                    </article>
+                    <article class="card">
+                      <img src="img/short deportivo .jpg" alt="Short Deportivo" />
+                      <div class="content">
+                        <strong>3x2 en playeras</strong>
+                        <div class="price">
+                          <span>Selecciona 3 y paga 2</span>
+                          <span class="tag">Promo</span>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                <div class="catalog-slide">
+                  <div class="grid catalog-grid">
+                    <article class="card">
+                      <img src="img/sudadera.jpg" alt="Sudadera" />
+                      <div class="content">
+                        <strong>Descuento en jeans</strong>
+                        <div class="price">
+                          <span>Hasta -20%</span>
+                          <span class="tag">Promo</span>
+                        </div>
+                      </div>
+                    </article>
+                    <article class="card">
+                      <img src="img/Chompa con capucha.jpg" alt="Chompa" />
+                      <div class="content">
+                        <strong>Envío gratis</strong>
+                        <div class="price">
+                          <span>En compras mayores a $50</span>
+                          <span class="tag">Promo</span>
+                        </div>
+                      </div>
+                    </article>
+                    <article class="card">
+                      <img src="img/playera basica.jpg" alt="Playera" />
+                      <div class="content">
+                        <strong>Descuento estudiantes</strong>
+                        <div class="price">
+                          <span>-15% con credencial</span>
+                          <span class="tag">Promo</span>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <button class="carousel-btn row-next" onclick="changeRowSlide(3, 1)">❯</button>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="catalogo">
+      <div class="container">
+        <div class="section-title">
+          <h2>Catálogo</h2>
+          <p>Nuestros productos destacados</p>
+        </div>
+        <div class="catalog-section">
+          <!-- Fila 1 - Playeras y Tops -->
+          <div class="catalog-row">
+            <h3>Playeras y Tops</h3>
+            <div class="carousel-wrapper">
+              <button class="carousel-btn row-prev" onclick="changeRowSlide(0, -1)">❮</button>
+              <div class="catalog-carousel">
+                <div class="catalog-track" id="row-0">
+                  <div class="catalog-slide">
+                    <div class="grid catalog-grid">
+                      <article class="card">
+                        <img src="img/playera basica.jpg" alt="Playera Básica" />
+                        <div class="content">
+                          <strong>Playera básica</strong>
+                          <div class="price">
+                            <span>$12.99</span>
+                            <span class="tag">Nuevo</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/polera cuello v.jpg" alt="Polera Cuello V" />
+                        <div class="content">
+                          <strong>Polera cuello V</strong>
+                          <div class="price">
+                            <span>$18.99</span>
+                            <span class="tag">Clásico</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/camisa formal.jpg" alt="Camisa Formal" />
+                        <div class="content">
+                          <strong>Camisa formal</strong>
+                          <div class="price">
+                            <span>$32.99</span>
+                            <span class="tag">Elegante</span>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                  <div class="catalog-slide">
+                    <div class="grid catalog-grid">
+                      <article class="card">
+                        <img src="img/playera completa.jpg" alt="Playera Completa" />
+                        <div class="content">
+                          <strong>Playera estampada</strong>
+                          <div class="price">
+                            <span>$15.99</span>
+                            <span class="tag">Trendy</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/camizeta manga larga.jpg" alt="Camiseta Manga Larga" />
+                        <div class="content">
+                          <strong>Camiseta manga larga</strong>
+                          <div class="price">
+                            <span>$19.99</span>
+                            <span class="tag">Temporada</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/top depottivo.jpg" alt="Top Deportivo" />
+                        <div class="content">
+                          <strong>Top deportivo</strong>
+                          <div class="price">
+                            <span>$14.99</span>
+                            <span class="tag">Fitness</span>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="carousel-btn row-next" onclick="changeRowSlide(0, 1)">❯</button>
+            </div>
+          </div>
+
+          <!-- Fila 2 - Pantalones -->
+          <div class="catalog-row">
+            <h3>Pantalones</h3>
+            <div class="carousel-wrapper">
+              <button class="carousel-btn row-prev" onclick="changeRowSlide(1, -1)">❮</button>
+              <div class="catalog-carousel">
+                <div class="catalog-track" id="row-1">
+                  <div class="catalog-slide">
+                    <div class="grid catalog-grid">
+                      <article class="card">
+                        <img src="img/Jeans slim.jpg" alt="Jeans Slim" />
+                        <div class="content">
+                          <strong>Jeans slim</strong>
+                          <div class="price">
+                            <span>$29.99</span>
+                            <span class="tag">Más vendido</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/Pantalón cargo.jpg" alt="Pantalón Cargo" />
+                        <div class="content">
+                          <strong>Pantalón cargo</strong>
+                          <div class="price">
+                            <span>$22.99</span>
+                            <span class="tag">Casual</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/short deportivo .jpg" alt="Short Deportivo" /> 
+                        <div class="content">
+                          <strong>Short deportivo</strong>
+                          <div class="price">
+                            <span>$15.99</span>
+                            <span class="tag">Verano</span>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                  <div class="catalog-slide">
+                    <div class="grid catalog-grid">
+                      <article class="card">
+                        <img src="img/quiero un hombre que promocione un Jeans slim.jpg" alt="Jeans Classic" />
+                        <div class="content">
+                          <strong>Jeans classic</strong>
+                          <div class="price">
+                            <span>$34.99</span>
+                            <span class="tag">Clásico</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/quiero que un hombre este modelando un Pantalón jogger y la imagen debe estar centrada en el pantalon. es para una pagina web de ropa.jpg" alt="Pantalón Jogger" />
+                        <div class="content">
+                          <strong>Pantalón jogger</strong>
+                          <div class="price">
+                            <span>$24.99</span>
+                            <span class="tag">Cómodo</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/Pantalón recto.jpg" alt="Pantalón Recto" />
+                        <div class="content">
+                          <strong>Pantalón recto</strong>
+                          <div class="price">
+                            <span>$27.99</span>
+                            <span class="tag">Formal</span>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="carousel-btn row-next" onclick="changeRowSlide(1, 1)">❯</button>
+            </div>
+          </div>
+
+          <!-- Fila 3 - Sudaderas y Chaquetas -->
+          <div class="catalog-row">
+            <h3>Sudaderas y Chaquetas</h3>
+            <div class="carousel-wrapper">
+              <button class="carousel-btn row-prev" onclick="changeRowSlide(2, -1)">❮</button>
+              <div class="catalog-carousel">
+                <div class="catalog-track" id="row-2">
+                  <div class="catalog-slide">
+                    <div class="grid catalog-grid">
+                      <article class="card">
+                        <img src="img/sudadera.jpg" alt="Sudadera" />
+                        <div class="content">
+                          <strong>Sudadera</strong>
+                          <div class="price">
+                            <span>$24.99</span>
+                            <span class="tag">Oferta</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/casaca deportiva.jpg" alt="Casaca Deportiva" />
+                        <div class="content">
+                          <strong>Casaca deportiva</strong>
+                          <div class="price">
+                            <span>$35.99</span>
+                            <span class="tag">Tendencia</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/chompa con capucha.jpg" alt="Chompa con Capucha" />
+                        <div class="content">
+                          <strong>Chompa con capucha</strong>
+                          <div class="price">
+                            <span>$28.99</span>
+                            <span class="tag">Popular</span>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                  <div class="catalog-slide">
+                    <div class="grid catalog-grid">
+                      <article class="card">
+                        <img src="img/chaqueta de cuero.jpg" alt="Chaqueta de Cuero" />
+                        <div class="content">
+                          <strong>Chaqueta de cuero</strong>
+                          <div class="price">
+                            <span>$59.99</span>
+                            <span class="tag">Premium</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/sudadera con cierre.jpg" alt="Sudadera con Cierre" />
+                        <div class="content">
+                          <strong>Sudadera con cierre</strong>
+                          <div class="price">
+                            <span>$26.99</span>
+                            <span class="tag">Cómoda</span>
+                          </div>
+                        </div>
+                      </article>
+                      <article class="card">
+                        <img src="img/chaleco acolchado.jpg" alt="Chaleco acolchado" />
+                        <div class="content">
+                          <strong>Chaleco acolchado</strong>
+                          <div class="price">
+                            <span>$22.99</span>
+                            <span class="tag">Ligera</span>
+                          </div>
+                        </div>
+                      </article>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <button class="carousel-btn row-next" onclick="changeRowSlide(2, 1)">❯</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section id="contacto">
+      <div class="container">
+        <div class="section-title">
+          <h2>Contacto</h2>
+        </div>
+        <div class="contact">
+          <div class="hero-card">
+            <h3 style="margin-top:0;">Datos del negocio</h3>
+            <p style="color: var(--muted); font-size: 13px; margin-top: 10px;">
+            enlace de WhatsApp: <strong>917198100</strong> .
+            </p>
+            <div class="map">
+              <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3917.4957890988226!2d-74.87568708989066!3d-10.925871789187193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x910a2c82b961d395%3A0x48a4f703261fa530!2sPLAZA%20DE%20ARMAS%20-%20PICHANAKI!5e0!3m2!1ses-419!2spe!4v1769048844933!5m2!1ses-419!2spe"
+                loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"
+                title="Ubicación en Google Maps"
+              ></iframe>
+            </div>
+          </div>
+          <form id="pedidoForm">
+            <h3 style="margin-top:0;">Formulario</h3>
+            <label for="nombre">Nombre</label>
+            <input id="nombre" name="nombre" type="text" placeholder="Tu nombre" required />
+
+            <label for="telefono">Teléfono</label>
+            <input id="telefono" name="telefono" type="text" placeholder="Tu número" required />
+
+            <label for="producto">Producto</label>
+            <input id="producto" name="producto" type="text" placeholder="Ej: Polera" />
+
+            <label for="talla">Talla</label>
+            <input id="talla" name="talla" type="text" placeholder="Ej: S / M / L" />
+
+            <label for="metodo_pago">Método de pago</label>
+            <select id="metodo_pago" name="metodo_pago" required>
+              <option value="Yape">Yape</option>
+              <option value="Plin">Plin</option>
+              <option value="Transferencia bancaria">Transferencia bancaria</option>
+              <option value="Pago contra entrega">Pago contra entrega</option>
+            </select>
+
+            <label for="ubicacion">Ubicación (link de Google Maps)</label>
+            <input id="ubicacion" name="ubicacion" type="text" placeholder="https://maps.google.com/..." />
+
+            <div id="pedidoResultado" class="alert"></div>
+            <div style="margin-top: 12px;">
+              <button class="btn btn-primary" type="submit">Enviar</button>
+              <button class="btn" type="reset">Limpiar</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>
+    <div class="container">
+      <div> 2026 - Nombre del Negocio. Todos los derechos reservados.</div>
+      <div style="margin-top: 15px; font-size: 24px; text-align: center;">
+        <a href="https://facebook.com" target="_blank" rel="noopener" style="margin: 0 10px; text-decoration: none; transition: transform 0.3s ease; display: inline-block;" title="Facebook">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#1877F2">
+            <path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/>
+          </svg>
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener" style="margin: 0 10px; text-decoration: none; transition: transform 0.3s ease; display: inline-block;" title="Instagram">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#E4405F">
+            <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zM5.838 12a6.162 6.162 0 1 1 12.324 0 6.162 6.162 0 0 1-12.324 0zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm4.965-10.405a1.44 1.44 0 1 1 2.881.001 1.44 1.44 0 0 1-2.881-.001z"/>
+          </svg>
+        </a>
+        <a href="https://tiktok.com" target="_blank" rel="noopener" style="margin: 0 10px; text-decoration: none; transition: transform 0.3s ease; display: inline-block;" title="TikTok">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="#FFFFFF">
+            <path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.085 1.825.846 3.68 2.25 4.925 1.395 1.255 3.275 1.78 5.125 1.64v4.155c-1.65-.03-3.3-.425-4.735-1.285-1.05-.635-1.915-1.525-2.61-2.525v7.87c-.015 3.225-2.345 6.305-5.435 7.385-1.4.5-2.915.615-4.365.405-2.465-.4-4.715-1.915-5.915-4.095-.895-1.585-1.115-3.485-.775-5.255.415-2.095 1.615-4.005 3.375-5.225 1.585-1.095 3.585-1.595 5.485-1.315v4.23c-1.015-.165-2.115-.105-3.025.435-.735.425-1.315 1.145-1.585 1.965-.415 1.225-.29 2.635.415 3.735.735 1.165 2.095 1.825 3.465 1.665 1.275-.145 2.44-.925 2.965-2.095.265-.585.385-1.225.385-1.865V.025z"/>
+          </svg>
+        </a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Botón flotante de WhatsApp -->
+  <a href="https://wa.me/51917198100?text=Hola%20estoy%20interesado%20en%20sus%20productos" 
+     class="whatsapp-float" 
+     target="_blank" 
+     rel="noopener"
+     title="Contáctanos por WhatsApp">
+    <svg width="30" height="30" viewBox="0 0 24 24" fill="currentColor">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.149-.67.149-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414-.074-.123-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.885-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+    </svg>
+  </a>
+
+  <script>
+    // Carrusel functionality
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-image');
+    const indicators = document.querySelectorAll('.indicator');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      // Remove active class from all slides and indicators
+      slides.forEach(slide => slide.classList.remove('active'));
+      indicators.forEach(indicator => indicator.classList.remove('active'));
+      
+      // Add active class to current slide and indicator
+      slides[index].classList.add('active');
+      indicators[index].classList.add('active');
+    }
+
+    function changeSlide(direction) {
+      currentSlide += direction;
+      
+      if (currentSlide >= totalSlides) {
+        currentSlide = 0;
+      } else if (currentSlide < 0) {
+        currentSlide = totalSlides - 1;
+      }
+      
+      showSlide(currentSlide);
+    }
+
+    function goToSlide(index) {
+      currentSlide = index;
+      showSlide(currentSlide);
+    }
+
+    // Auto-play carousel
+    function autoPlayCarousel() {
+      changeSlide(1);
+    }
+
+    // Add click event to indicators
+    indicators.forEach((indicator, index) => {
+      indicator.addEventListener('click', () => goToSlide(index));
+    });
+
+    // Start auto-play
+    setInterval(autoPlayCarousel, 4000); // Change slide every 4 seconds
+
+    // Catálogo rows carousel functionality
+    const rowSlides = [0, 0, 0, 0]; // Track position for each row (now 4 rows including ofertas)
+    const totalRowSlides = [2, 2, 2, 2]; // Number of slides per row: [Playeras, Pantalones, Sudaderas, Ofertas]
+
+    function changeRowSlide(rowIndex, direction) {
+      const total = totalRowSlides[rowIndex];
+      rowSlides[rowIndex] += direction;
+      
+      if (rowSlides[rowIndex] >= total) {
+        rowSlides[rowIndex] = 0;
+      } else if (rowSlides[rowIndex] < 0) {
+        rowSlides[rowIndex] = total - 1;
+      }
+      
+      const track = document.getElementById(`row-${rowIndex}`);
+      if (track) {
+        const offset = -rowSlides[rowIndex] * 100;
+        track.style.transform = `translateX(${offset}%)`;
+      }
+    }
+
+    // Form functionality
+    const form = document.getElementById("pedidoForm");
+    const resultado = document.getElementById("pedidoResultado");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      resultado.style.display = "none";
+      resultado.className = "alert";
+      resultado.textContent = "Enviando pedido...";
+      resultado.style.display = "block";
+
+      const data = {
+        nombre: document.getElementById("nombre").value,
+        telefono: document.getElementById("telefono").value,
+        producto: document.getElementById("producto").value,
+        talla: document.getElementById("talla").value,
+        metodo_pago: document.getElementById("metodo_pago").value,
+        ubicacion: document.getElementById("ubicacion").value,
+      };
+
+      try {
+        const res = await fetch("http://127.0.0.1:8000/pedido", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(data),
+        });
+
+        const json = await res.json();
+
+        if (res.ok && json && json.ok) {
+          resultado.className = "alert alert-success";
+          resultado.textContent = "Listo: tu pedido fue enviado. Te contactaremos pronto.";
+          form.reset();
+        } else {
+          resultado.className = "alert alert-error";
+          resultado.textContent = "No se pudo enviar el pedido. Revisa los datos e inténtalo otra vez.";
+        }
+      } catch (err) {
+        resultado.className = "alert alert-error";
+        resultado.textContent = "No se pudo conectar con el servidor. Asegúrate de que el backend esté encendido.";
+      }
+    });
+  </script>
+</body>
+</html>
+
