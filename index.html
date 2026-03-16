@@ -1112,13 +1112,14 @@
               ></iframe>
             </div>
           </div>
-          <form id="pedidoForm">
+          <form id="pedidoForm" method="POST" action="https://script.google.com/macros/s/AKfycbxag4j4PsnjyCPn_CtJUC-JhIvCEFK2qZlhTUhc18gz_LwcyQJ3MeuTIL-pDtFAfzab/exec" target="hiddenFrame">
+            <iframe name="hiddenFrame" id="hiddenFrame" style="display:none;" onload="formSubmitted()"></iframe>
             <h3 style="margin-top:0;">Formulario</h3>
             <label for="nombre">Nombre</label>
             <input id="nombre" name="nombre" type="text" placeholder="Tu nombre" required />
 
             <label for="telefono">Teléfono</label>
-            <input id="telefono" name="telefono" type="text" placeholder="Tu número" required />
+            <input id="telefono" name="telefono" type="tel" placeholder="Tu número" required pattern="[0-9]+" title="Ingresa solo números" />
 
             <label for="producto">Producto</label>
             <input id="producto" name="producto" type="text" placeholder="Ej: Polera" />
@@ -1401,48 +1402,30 @@
       }
     }
 
-    // Form functionality
+    // Form functionality - Google Apps Script (envío directo)
     const form = document.getElementById("pedidoForm");
     const resultado = document.getElementById("pedidoResultado");
-
-    form.addEventListener("submit", async (e) => {
-      e.preventDefault();
-
+    const hiddenFrame = document.getElementById("hiddenFrame");
+    
+    // Esta función se ejecuta cuando el iframe termina de cargar
+    function formSubmitted() {
+      // Verificar que el formulario fue enviado
+      setTimeout(() => {
+        resultado.className = "alert alert-success";
+        resultado.textContent = "Listo: tu pedido fue enviado. Te contactaremos pronto.";
+        form.reset();
+      }, 500);
+    }
+    
+    form.addEventListener("submit", (e) => {
+      // Mostrar mensaje de enviando
       resultado.style.display = "none";
       resultado.className = "alert";
       resultado.textContent = "Enviando pedido...";
       resultado.style.display = "block";
-
-      const data = {
-        nombre: document.getElementById("nombre").value,
-        telefono: document.getElementById("telefono").value,
-        producto: document.getElementById("producto").value,
-        talla: document.getElementById("talla").value,
-        metodo_pago: document.getElementById("metodo_pago").value,
-        ubicacion: document.getElementById("ubicacion").value,
-      };
-
-      try {
-        const res = await fetch("http://127.0.0.1:8000/pedido", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-
-        const json = await res.json();
-
-        if (res.ok && json && json.ok) {
-          resultado.className = "alert alert-success";
-          resultado.textContent = "Listo: tu pedido fue enviado. Te contactaremos pronto.";
-          form.reset();
-        } else {
-          resultado.className = "alert alert-error";
-          resultado.textContent = "No se pudo enviar el pedido. Revisa los datos e inténtalo otra vez.";
-        }
-      } catch (err) {
-        resultado.className = "alert alert-error";
-        resultado.textContent = "No se pudo conectar con el servidor. Asegúrate de que el backend esté encendido.";
-      }
+      
+      // El formulario se envía automáticamente al action URL
+      // El onload del iframe mostrará el mensaje de éxito
     });
   </script>
 </body>

@@ -1,0 +1,63 @@
+═══════════════════════════════════════════════════════════════
+  CÓDIGO ACTUALIZADO PARA GOOGLE APPS SCRIPT
+═══════════════════════════════════════════════════════════════
+
+El código en tu archivo code.gs ya está actualizado automáticamente.
+
+Para aplicarlo a tu Google Apps Script, sigue estos pasos:
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASO 1: Copia el código actualizado
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+En tu archivo local "code.gs" (en esta misma carpeta), busca esta línea:
+
+  tel: "'" + (parametros.telefono || ""),
+
+Ya está lista, no necesitas cambiarla aquí.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASO 2: Ve a Google Sheets
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Abre tu Google Sheets donde recibes los pedidos
+2. Haz clic en Extensiones > Apps Script
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASO 3: Actualiza el código
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. En el editor de Apps Script, busca el archivo "Code.gs"
+2. Busca esta línea en la función handleRequest:
+   
+   telefono: parametros.telefono || "",
+
+3. Cámbiala por:
+   
+   telefono: "'" + (parametros.telefono || ""),
+
+4. Haz clic en el botón Guardar (Ctrl+S)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASO 4: Despliega nuevamente
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Haz clic en el botón azul "Deploy" (Implementar)
+2. Selecciona "New deployment"
+3. Tipo: Web app
+4. Ejecutar como: Yo
+5. Quién tiene acceso: Cualquier persona
+6. Haz clic en "Deploy"
+7. COPIA LA NUEVA URL
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+PASO 5: Actualiza tu HTML
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+1. Abre tu archivo index.html
+2. Busca la línea del formulario (línea 1115)
+3. Reemplaza la URL antigua con la nueva URL
+
+¡Listo! Los teléfonos ahora se guardarán correctamente.
+
+═══════════════════════════════════════════════════════════════
