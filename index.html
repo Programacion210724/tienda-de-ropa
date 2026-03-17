@@ -662,6 +662,10 @@
       .carousel-large .carousel-slide {
         height: 700px;
       }
+      .carousel-image {
+        background-color: transparent;
+        object-fit: contain;
+      }
       .carousel-overlay {
         padding: 20px;
       }
@@ -726,6 +730,28 @@
       gap: 14px;
       min-width: 100%;
       padding: 0;
+    }
+    
+    /* Responsive para carruseles de catálogo y ofertas - 1 imagen por slide en móvil */
+    @media (max-width: 768px) {
+      .catalog-row .catalog-grid {
+        grid-template-columns: 1fr; /* 1 imagen grande por slide */
+      }
+      .catalog-row .catalog-slide {
+        min-width: 100%;
+      }
+      /* Mantener botones de navegación visibles en móvil */
+      .catalog-row .row-prev,
+      .catalog-row .row-next {
+        display: block !important;
+        z-index: 20;
+      }
+      .catalog-row .row-prev {
+        left: 5px;
+      }
+      .catalog-row .row-next {
+        right: 5px;
+      }
     }
     .catalog-row .row-prev {
       position: absolute;
@@ -1460,7 +1486,54 @@
 
     // Catálogo rows carousel functionality
     const rowSlides = [0, 0, 0, 0]; // Track position for each row (now 4 rows including ofertas)
-    const totalRowSlides = [2, 2, 2, 2]; // Number of slides per row: [Playeras, Pantalones, Sudaderas, Ofertas]
+    const totalRowSlides = [2, 2, 2, 2]; // Slides fixed in HTML: [Playeras, Pantalones, Sudaderas, Ofertas]
+    
+    // Función para reconstruir carrusel para móvil (1 producto por slide)
+    function rebuildCarouselForMobile() {
+      const isMobile = window.innerWidth <= 768;
+      
+      // Solo reconstruir si es móvil y no se ha hecho
+      if (isMobile && !document.body.classList.contains('carousel-mobile-rebuilt')) {
+        document.body.classList.add('carousel-mobile-rebuilt');
+        
+        // Rebuild each row
+        for (let rowIndex = 0; rowIndex < 4; rowIndex++) {
+          const track = document.getElementById(`row-${rowIndex}`);
+          if (!track) continue;
+          
+          // Recopilar todos los productos del track
+          const allCards = [];
+          const slides = track.querySelectorAll('.catalog-slide');
+          slides.forEach(slide => {
+            const cards = slide.querySelectorAll('.card');
+            cards.forEach(card => allCards.push(card));
+          });
+          
+          // Crear nueva estructura: 1 producto por slide
+          track.innerHTML = '';
+          allCards.forEach((card, index) => {
+            const newSlide = document.createElement('div');
+            newSlide.className = 'catalog-slide';
+            const newGrid = document.createElement('div');
+            newGrid.className = 'grid catalog-grid';
+            newGrid.style.gridTemplateColumns = '1fr';
+            newGrid.appendChild(card.cloneNode(true));
+            newSlide.appendChild(newGrid);
+            track.appendChild(newSlide);
+          });
+          
+          // Actualizar total de slides
+          totalRowSlides[rowIndex] = allCards.length;
+        }
+      } else if (!isMobile && document.body.classList.contains('carousel-mobile-rebuilt')) {
+        // Recargar página para restaurar estructura desktop
+        location.reload();
+      }
+    }
+    
+    // Inicializar al cargar
+    window.addEventListener('load', rebuildCarouselForMobile);
+    window.addEventListener('resize', rebuildCarouselForMobile);
 
     function changeRowSlide(rowIndex, direction) {
       const total = totalRowSlides[rowIndex];
@@ -1478,6 +1551,24 @@
         track.style.transform = `translateX(${offset}%)`;
       }
     }
+    
+    // Actualizar visibilidad de botones según el tamaño de pantalla
+    function updateCarouselButtons() {
+      const rows = document.querySelectorAll('.catalog-row');
+      
+      rows.forEach((row, index) => {
+        const prevBtn = row.querySelector('.row-prev');
+        const nextBtn = row.querySelector('.row-next');
+        
+        // Siempre mostrar los botones (el JavaScript maneja el movimiento)
+        if (prevBtn) prevBtn.style.display = 'block';
+        if (nextBtn) nextBtn.style.display = 'block';
+      });
+    }
+    
+    // Inicializar botones al cargar la página
+    window.addEventListener('load', updateCarouselButtons);
+    window.addEventListener('resize', updateCarouselButtons);
 
     // Form functionality - Google Apps Script (envío directo)
     const form = document.getElementById("pedidoForm");
