@@ -2207,6 +2207,16 @@
     })();
 
     // ============================
+    // FORZAR INICIO EN SECCIÓN HOME AL CARGAR
+    // ============================
+    (function forceHomeOnLoad() {
+      // Si no hay hash en la URL, scroll al inicio
+      if (!window.location.hash || window.location.hash === '#catalogo') {
+        window.scrollTo(0, 0);
+      }
+    })();
+
+    // ============================
     // SISTEMA DE COHERENCIA DE PRECIOS
     // ============================
     // Este sistema sincroniza los precios entre Ofertas Especiales y el Catálogo
