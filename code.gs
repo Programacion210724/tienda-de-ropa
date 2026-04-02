@@ -15,7 +15,7 @@ const CONFIG = {
   // Tu número de WhatsApp (para notificaciones)
   whatsappNumber: "51917198100",
   // Email para notificaciones (alternativo a WhatsApp)
-  adminEmail: "tu-email@ejemplo.com"
+  adminEmail: "kennedybizarroreyes@gmail.com"
 };
 
 /**
@@ -91,6 +91,10 @@ function handleRequest(e) {
       enviarNotificacionWhatsApp(pedido);
     }
     
+    if (CONFIG.adminEmail && CONFIG.adminEmail !== "tu-email@ejemplo.com") {
+      enviarNotificacionEmail(pedido);
+    }
+    
     // Devolver respuesta exitosa
     return ContentService
       .createTextOutput(JSON.stringify({
@@ -153,6 +157,19 @@ function guardarEnSheets(pedido) {
  * Enviar notificación por WhatsApp usando CallMeBot (gratis)
  * Equivalente a SimpleWhatsAppSender
  */
+function enviarNotificacionEmail(pedido) {
+  try {
+    const destinatario = CONFIG.adminEmail;
+    const asunto = "Nuevo pedido - " + pedido.producto;
+    const cuerpo = "Cliente: " + pedido.nombre + "\nTelefono: " + pedido.telefono + "\nProducto: " + pedido.producto + "\nTalla: " + pedido.talla + "\nPago: " + pedido.metodo_pago + "\nUbicacion: " + (pedido.ubicacion || "No especificada");
+    GmailApp.sendEmail(destinatario, asunto, cuerpo);
+    return { success: true };
+  } catch (error) {
+    Logger.log("Error email: " + error.message);
+    return { success: false };
+  }
+}
+
 function enviarNotificacionWhatsApp(pedido) {
   try {
     // Crear mensaje formateado
@@ -206,6 +223,54 @@ function doGet() {
 /**
  * Función para probar el guardado
  */
+/**
+ * Mostrar notificación/alerta en Sheets cuando llega nuevo pedido
+ * Esta función se ejecuta automáticamente cuando se编辑a la hoja
+ */
+function onEdit(e) {
+  const sheet = e.source.getActiveSheet();
+  const range = e.range;
+  
+  // Verificar si es la hoja de Pedidos y hay una nueva fila
+  if (sheet.getName() === "Pedidos" && range.getRow() > 1) {
+    const lastRow = sheet.getLastRow();
+    
+    // Si hay al menos un pedido nuevo
+    if (lastRow > 1) {
+      // Obtener los datos del último pedido
+      const pedido = sheet.getRange(lastRow, 1, 1, 7).getValues()[0];
+      
+      // Mostrar notificación tipo toast
+      sheet.showToast("🛍️ Nuevo pedido: " + pedido[3] + " - " + pedido[1], "NovaWear", 10);
+      
+      Logger.log("Alerta mostrada para pedido: " + pedido[3]);
+    }
+  }
+}
+
+/**
+ * Configurar activador para mostrar alertas automáticas
+ * Ejecuta esto una vez para activar las notificaciones en Sheets
+ */
+function crearActivador() {
+  // Eliminar activadores anteriores si existen
+  const triggers = ScriptApp.getProjectTriggers();
+  triggers.forEach(function(trigger) {
+    if (trigger.getHandlerFunction() === "onEdit") {
+      ScriptApp.deleteTrigger(trigger);
+    }
+  });
+  
+  // Crear nuevo activador que detecta cambios en la hoja
+  ScriptApp.newTrigger("onEdit")
+    .forSpreadsheet(SpreadsheetApp.getActiveSpreadsheet())
+    .onEdit()
+    .create();
+  
+  Logger.log("Activador creado exitosamente");
+  return "Activador configurado. Ahora recibirás alertas en Sheets.";
+}
+
 function testGuardar() {
   const pedidoPrueba = {
     nombre: "Juan Pérez",
