@@ -3,7 +3,7 @@
   "exceptionLogging": "STACKDRIVER",
   "runtimeVersion": "V8",
   "webapp": {
-    "executeAs": "ACCESSIBLE",
+    "executeAs": "ME",
     "headers": {
       "Access-Control-Allow-Origin": "*"
     }

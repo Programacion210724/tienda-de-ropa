@@ -12,9 +12,7 @@
 
 // Configuración - cambia estos valores
 const CONFIG = {
-  // Tu número de WhatsApp (para notificaciones)
-  whatsappNumber: "51917198100",
-  // Email para notificaciones (alternativo a WhatsApp)
+  // Email para notificaciones
   adminEmail: "kennedybizarroreyes@gmail.com"
 };
 
@@ -84,15 +82,17 @@ function handleRequest(e) {
     };
     
     // Guardar en Google Sheets
-    const resultado = guardarEnSheets(pedido);
-    
-    // Enviar notificación por WhatsApp (usando CallMeBot API gratuita)
-    if (pedido.telefono) {
-      enviarNotificacionWhatsApp(pedido);
+    const resultadoSheets = guardarEnSheets(pedido);
+    if (!resultadoSheets.success) {
+      Logger.log("Error guardando en Sheets: " + resultadoSheets.message);
     }
-    
-    if (CONFIG.adminEmail && CONFIG.adminEmail !== "tu-email@ejemplo.com") {
-      enviarNotificacionEmail(pedido);
+
+    // Enviar notificación por email
+    if (CONFIG.adminEmail) {
+      const resultadoEmail = enviarNotificacionEmail(pedido);
+      if (!resultadoEmail.success) {
+        Logger.log("Error enviando email: " + resultadoEmail.message);
+      }
     }
     
     // Devolver respuesta exitosa
@@ -105,6 +105,7 @@ function handleRequest(e) {
       .setMimeType(ContentService.MimeType.JSON);
     
   } catch (error) {
+    Logger.log("Error general: " + error.message);
     // Devolver respuesta de error
     return ContentService
       .createTextOutput(JSON.stringify({
@@ -154,56 +155,28 @@ function guardarEnSheets(pedido) {
 }
 
 /**
- * Enviar notificación por WhatsApp usando CallMeBot (gratis)
- * Equivalente a SimpleWhatsAppSender
+ * Enviar notificación por email
  */
 function enviarNotificacionEmail(pedido) {
   try {
     const destinatario = CONFIG.adminEmail;
     const asunto = "Nuevo pedido - " + pedido.producto;
-    const cuerpo = "Cliente: " + pedido.nombre + "\nTelefono: " + pedido.telefono + "\nProducto: " + pedido.producto + "\nTalla: " + pedido.talla + "\nPago: " + pedido.metodo_pago + "\nUbicacion: " + (pedido.ubicacion || "No especificada");
+    const cuerpo = `Nuevo pedido recibido:
+
+Cliente: ${pedido.nombre}
+Teléfono: ${pedido.telefono}
+Producto: ${pedido.producto}
+Talla: ${pedido.talla}
+Método de Pago: ${pedido.metodo_pago}
+Ubicación: ${pedido.ubicacion || "No especificada"}
+
+Fecha: ${pedido.fecha}`;
+
     GmailApp.sendEmail(destinatario, asunto, cuerpo);
+    Logger.log("Email enviado exitosamente a " + destinatario);
     return { success: true };
   } catch (error) {
     Logger.log("Error email: " + error.message);
-    return { success: false };
-  }
-}
-
-function enviarNotificacionWhatsApp(pedido) {
-  try {
-    // Crear mensaje formateado
-    const mensaje = `🛍️ *NUEVO PEDIDO* 🛍️
-    
-📋 *Cliente:* ${pedido.nombre}
-📞 *Teléfono:* ${pedido.telefono}
-
-📦 *Pedido:*
-• Producto: ${pedido.producto}
-• Talla: ${pedido.talla}
-• Pago: ${pedido.metodo_pago}
-
-📍 *Ubicación:* ${pedido.ubicacion || "No especificada"}
-
-_Enviado desde tu tienda web_`;
-    
-    // Codificar el mensaje para URL
-    const mensajeCodificado = encodeURIComponent(mensaje);
-    const telefono = CONFIG.whatsappNumber.replace("+", "").replace(" ", "");
-    
-    // URL de CallMeBot (gratis - necesita configurar primero en callmebot.com)
-    // NOTA: Primero debes registrarte en https://www.callmebot.com/
-    //       y obtener tu API key gratuita
-    const url = `https://api.callmebot.com/whatsapp.php?phone=${telefono}&text=${mensajeCodificado}&apikey=TU_API_KEY_CALLMEBOT`;
-    
-    // Enviar la solicitud (comentado hasta que configures tu API key)
-    // UrlFetchApp.fetch(url);
-    
-    Logger.log("Notificación enviada: " + mensaje);
-    return { success: true };
-    
-  } catch (error) {
-    Logger.log("Error WhatsApp: " + error.message);
     return { success: false, message: error.message };
   }
 }
