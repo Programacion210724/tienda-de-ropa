@@ -89,6 +89,7 @@ function handleRequest(e) {
 
     // Enviar notificación por email
     if (CONFIG.adminEmail) {
+      Logger.log("Llamando enviarNotificacionEmail con pedido: " + JSON.stringify(pedido));
       const resultadoEmail = enviarNotificacionEmail(pedido);
       if (!resultadoEmail.success) {
         Logger.log("Error enviando email: " + resultadoEmail.message);
@@ -159,6 +160,13 @@ function guardarEnSheets(pedido) {
  */
 function enviarNotificacionEmail(pedido) {
   try {
+    Logger.log("enviarNotificacionEmail llamado con: " + JSON.stringify(pedido));
+    if (!pedido) {
+      throw new Error("Pedido es undefined");
+    }
+    if (!pedido.producto) {
+      throw new Error("Producto es undefined en pedido");
+    }
     const destinatario = CONFIG.adminEmail;
     const asunto = "Nuevo pedido - " + pedido.producto;
     const cuerpo = `Nuevo pedido recibido:

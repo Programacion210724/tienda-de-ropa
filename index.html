@@ -1453,8 +1453,7 @@
               ></iframe>
             </div>
           </div>
-          <form id="pedidoForm" method="POST" action="https://script.google.com/macros/s/AKfycbxoziHOfEq-aqGZ8Tj3jjTDV_jRaKSac1l4T9C9TksYOh7oZtyqfRsV8ylBX_9O_xBb/exec" target="hiddenFrame">
-            <iframe name="hiddenFrame" id="hiddenFrame" style="display:none;" onload="formSubmitted()"></iframe>
+          <form id="pedidoForm">
             <h3 style="margin-top:0;">Realize su pedido en este formulario😊</h3>
             <label for="nombre">Nombre</label>
             <input id="nombre" name="nombre" type="text" placeholder="Tu nombre" required />
@@ -1808,30 +1807,40 @@
     window.addEventListener('load', updateCarouselButtons);
     window.addEventListener('resize', updateCarouselButtons);
 
-    // Form functionality - Google Apps Script (envío directo)
+    // Form functionality - Google Apps Script (envío con fetch)
     const form = document.getElementById("pedidoForm");
     const resultado = document.getElementById("pedidoResultado");
-    const hiddenFrame = document.getElementById("hiddenFrame");
-    
-    // Esta función se ejecuta cuando el iframe termina de cargar
-    function formSubmitted() {
-      // Verificar que el formulario fue enviado
-      setTimeout(() => {
-        resultado.className = "alert alert-success";
-        resultado.textContent = "😉 Listo: tu pedido fue enviado. Te contactaremos pronto.";
-        form.reset();
-      }, 500);
-    }
-    
-    form.addEventListener("submit", (e) => {
-      // Mostrar mensaje de enviando
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
       resultado.style.display = "none";
       resultado.className = "alert";
       resultado.textContent = "Enviando pedido...";
       resultado.style.display = "block";
-      
-      // El formulario se envía automáticamente al action URL
-      // El onload del iframe mostrará el mensaje de éxito
+
+      const formData = new FormData(form);
+
+      try {
+        const response = await fetch('https://script.google.com/macros/s/AKfycbwpLhck8tAkAEkbJMW6H6saNO2Spq2ruluhofhXGYNsx6pvb5B9CeJa0TrYhLMIzgA/exec', {
+          method: 'POST',
+          body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.success) {
+          resultado.className = "alert alert-success";
+          resultado.textContent = "😉 Listo: tu pedido fue enviado. Te contactaremos pronto.";
+          form.reset();
+        } else {
+          resultado.className = "alert alert-error";
+          resultado.textContent = "Error: " + result.message;
+        }
+      } catch (error) {
+        resultado.className = "alert alert-error";
+        resultado.textContent = "Error al enviar: " + error.message;
+      }
     });
 
     // ============================================
