@@ -410,6 +410,7 @@
       height: 100%;
       object-fit: cover;
       transition: transform 0.3s ease;
+      will-change: transform;
     }
     .card:hover .img img{
       transform: scale(1.08);
@@ -825,7 +826,7 @@
     }
     .catalog-row .catalog-track {
       display: flex;
-      transition: transform 0.5s ease-in-out;
+      transition: none; /* Desactivar para drag fluido */
     }
     .catalog-row .catalog-slide {
       min-width: 100%;
@@ -1008,7 +1009,7 @@
     .catalog-row .catalog-carousel {
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
-      scroll-snap-type: x mandatory;
+      scroll-snap-type: x proximity;
     }
 
     .catalog-row .card {
@@ -1026,6 +1027,10 @@
       gap: 14px;
       transform: none !important;
       animation: none !important;
+    }
+
+    .catalog-track {
+      will-change: transform;
     }
 
     /* Responsive para grid en búsqueda */
@@ -2363,16 +2368,28 @@
       function applyDragToCarousel(carousel) {
         if (!carousel) return;
 
+        const track = carousel.querySelector('.catalog-track');
+        if (!track) return;
+
         let isDown = false;
         let startX;
-        let scrollLeft;
+        let currentTranslate = 0;
         let isDragging = false;
         let touchStartX = 0;
-        let touchScrollLeft = 0;
         let lastMoveTime = 0;
         let lastMoveX = 0;
         let velocity = 0;
         let animationId = null;
+        let ticking = false;
+
+        // Inicializar transform
+        track.style.transform = `translate3d(0px, 0, 0)`;
+
+        // Función para actualizar posición con throttle
+        function updatePosition() {
+          track.style.transform = `translate3d(${currentTranslate}px, 0, 0)`;
+          ticking = false;
+        }
 
         // Función para decelerar el scroll (inercia)
         function decelerate() {
@@ -2385,7 +2402,12 @@
             return;
           }
 
-          carousel.scrollLeft += velocity;
+          currentTranslate += velocity;
+          // Clamp para no salir de límites
+          const maxTranslate = Math.max(0, track.scrollWidth - carousel.clientWidth);
+          currentTranslate = Math.max(-maxTranslate, Math.min(0, currentTranslate));
+
+          track.style.transform = `translate3d(${currentTranslate}px, 0, 0)`;
           velocity *= 0.97; // Factor de deceleración más suave para más inercia
           animationId = requestAnimationFrame(decelerate);
         }
@@ -2396,7 +2418,6 @@
           isDragging = true;
           carousel.classList.add('dragging');
           startX = e.pageX - carousel.offsetLeft;
-          scrollLeft = carousel.scrollLeft;
           lastMoveTime = Date.now();
           lastMoveX = startX;
           velocity = 0;
@@ -2432,7 +2453,13 @@
 
           const x = e.pageX - carousel.offsetLeft;
           const walk = (x - startX) * 4; // Aumentar velocidad del scroll
-          carousel.scrollLeft = scrollLeft - walk;
+          currentTranslate += walk;
+
+          // Throttle updates
+          if (!ticking) {
+            requestAnimationFrame(updatePosition);
+            ticking = true;
+          }
 
           // Calcular velocidad
           const now = Date.now();
@@ -2443,12 +2470,12 @@
           }
           lastMoveTime = now;
           lastMoveX = x;
+          startX = x; // Actualizar startX para movimiento continuo
         });
 
         // Touch events
         carousel.addEventListener('touchstart', (e) => {
           touchStartX = e.touches[0].pageX - carousel.offsetLeft;
-          touchScrollLeft = carousel.scrollLeft;
           lastMoveTime = Date.now();
           lastMoveX = touchStartX;
           velocity = 0;
@@ -2460,18 +2487,25 @@
 
         carousel.addEventListener('touchmove', (e) => {
           const x = e.touches[0].pageX - carousel.offsetLeft;
-          const walk = (x - touchStartX) * 4; // Aumentar velocidad del scroll
-          carousel.scrollLeft = touchScrollLeft - walk;
+          const walk = (x - touchStartX) * 6; // Aumentar más en móvil para mejor respuesta
+          currentTranslate += walk;
+
+          // Throttle updates
+          if (!ticking) {
+            requestAnimationFrame(updatePosition);
+            ticking = true;
+          }
 
           // Calcular velocidad
           const now = Date.now();
           const timeDiff = now - lastMoveTime;
           if (timeDiff > 0) {
             const distance = x - lastMoveX;
-            velocity = distance / timeDiff * 15; // Aumentar factor para más inercia
+            velocity = distance / timeDiff * 20; // Más inercia en móvil
           }
           lastMoveTime = now;
           lastMoveX = x;
+          touchStartX = x; // Actualizar para movimiento continuo
         }, { passive: true });
 
         carousel.addEventListener('touchend', () => {
