@@ -383,6 +383,20 @@
       transform: translateY(-5px);
       box-shadow: 0 12px 24px rgba(0,0,0,0.3), 0 4px 8px rgba(124, 92, 255, 0.2);
     }
+
+    /* Resaltado temporal para productos seleccionados */
+    .card.highlight {
+      border-color: var(--brand);
+      box-shadow: 0 0 20px rgba(124, 92, 255, 0.6), 0 4px 8px rgba(124, 92, 255, 0.3);
+      transform: scale(1.02);
+      animation: highlightPulse 2s ease-in-out;
+    }
+
+    @keyframes highlightPulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+      100% { transform: scale(1.02); }
+    }
     .card .img{
       height: 170px;
       background:
@@ -994,6 +1008,11 @@
     .catalog-row .catalog-carousel {
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
+      scroll-snap-type: x mandatory;
+    }
+
+    .catalog-row .card {
+      scroll-snap-align: center;
     }
 
     /* Modo búsqueda: Grid layout para carruseles */
@@ -1592,12 +1611,20 @@
     function filtrarProductosNav(textoBusqueda) {
       const termino = textoBusqueda.toLowerCase().trim();
       const suggestionsBox = document.getElementById('suggestionsBoxNav');
-      
+
+      // Toggle modo búsqueda
+      const catalogRows = document.querySelectorAll('.catalog-row');
+      if (termino.length > 0) {
+        catalogRows.forEach(row => row.classList.add('search-active'));
+      } else {
+        catalogRows.forEach(row => row.classList.remove('search-active'));
+      }
+
       let productos = document.querySelectorAll('.producto-item');
       if (productos.length === 0) {
         productos = document.querySelectorAll('.card');
       }
-      
+
       let sugerencias = [];
 
       productos.forEach(function(producto) {
@@ -1606,7 +1633,7 @@
         const imagen = producto.querySelector('img');
         const altImagen = imagen ? imagen.alt.toLowerCase() : '';
 
-        if (nombre.includes(termino) || altImagen.includes(termino)) {
+        if (termino.length === 0 || nombre.includes(termino) || altImagen.includes(termino)) {
           producto.style.display = '';
           if (sugerencias.length < 8) {
             const imgSrc = imagen ? imagen.src : '';
@@ -1617,7 +1644,7 @@
           producto.style.display = 'none';
         }
       });
-      
+
       // Mostrar sugerencias
       if (termino.length > 0 && sugerencias.length > 0) {
         let htmlSugerencias = '';
@@ -1639,7 +1666,38 @@
       document.getElementById('buscadorInputNav').value = nombre;
       document.getElementById('suggestionsBoxNav').classList.remove('show');
       filtrarProductosNav(nombre);
+
+      // Scroll al catálogo y luego al producto
       document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'});
+
+      // Scroll y resaltado después de filtrar
+      setTimeout(() => {
+        const todosProductos = document.querySelectorAll('.card');
+        let primerProducto = null;
+
+        // Encontrar el primer producto visible
+        for (let producto of todosProductos) {
+          if (producto.style.display !== 'none') {
+            primerProducto = producto;
+            break;
+          }
+        }
+
+        if (primerProducto) {
+          // Scroll suave al producto centrado
+          primerProducto.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'nearest'
+          });
+
+          // Agregar resaltado temporal
+          primerProducto.classList.add('highlight');
+          setTimeout(() => {
+            primerProducto.classList.remove('highlight');
+          }, 2000);
+        }
+      }, 500); // Mayor delay porque primero scroll al catálogo
     }
 
     // Función de búsqueda de productos
@@ -1714,6 +1772,36 @@
       document.getElementById('buscadorInput').value = nombre;
       document.getElementById('suggestionsBox').classList.remove('show');
       filtrarProductos(nombre);
+
+      // Scroll y resaltado después de filtrar
+      setTimeout(() => {
+        const productosVisibles = document.querySelectorAll('.card[style*="display: none;"]');
+        const todosProductos = document.querySelectorAll('.card');
+        let primerProducto = null;
+
+        // Encontrar el primer producto visible
+        for (let producto of todosProductos) {
+          if (producto.style.display !== 'none') {
+            primerProducto = producto;
+            break;
+          }
+        }
+
+        if (primerProducto) {
+          // Scroll suave al producto centrado
+          primerProducto.scrollIntoView({
+            behavior: 'smooth',
+            block: 'center',
+            inline: 'nearest'
+          });
+
+          // Agregar resaltado temporal
+          primerProducto.classList.add('highlight');
+          setTimeout(() => {
+            primerProducto.classList.remove('highlight');
+          }, 2000);
+        }
+      }, 100); // Pequeño delay para que el DOM se actualice
     }
     
     // Cerrar sugerencias al hacer clic fuera
@@ -2298,7 +2386,7 @@
           }
 
           carousel.scrollLeft += velocity;
-          velocity *= 0.95; // Factor de deceleración
+          velocity *= 0.97; // Factor de deceleración más suave para más inercia
           animationId = requestAnimationFrame(decelerate);
         }
 
@@ -2343,7 +2431,7 @@
           e.preventDefault();
 
           const x = e.pageX - carousel.offsetLeft;
-          const walk = (x - startX) * 2;
+          const walk = (x - startX) * 4; // Aumentar velocidad del scroll
           carousel.scrollLeft = scrollLeft - walk;
 
           // Calcular velocidad
@@ -2351,7 +2439,7 @@
           const timeDiff = now - lastMoveTime;
           if (timeDiff > 0) {
             const distance = x - lastMoveX;
-            velocity = distance / timeDiff * 10; // Ajustar factor
+            velocity = distance / timeDiff * 15; // Aumentar factor para más inercia
           }
           lastMoveTime = now;
           lastMoveX = x;
@@ -2372,7 +2460,7 @@
 
         carousel.addEventListener('touchmove', (e) => {
           const x = e.touches[0].pageX - carousel.offsetLeft;
-          const walk = (x - touchStartX) * 2;
+          const walk = (x - touchStartX) * 4; // Aumentar velocidad del scroll
           carousel.scrollLeft = touchScrollLeft - walk;
 
           // Calcular velocidad
@@ -2380,7 +2468,7 @@
           const timeDiff = now - lastMoveTime;
           if (timeDiff > 0) {
             const distance = x - lastMoveX;
-            velocity = distance / timeDiff * 10;
+            velocity = distance / timeDiff * 15; // Aumentar factor para más inercia
           }
           lastMoveTime = now;
           lastMoveX = x;
