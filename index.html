@@ -2186,24 +2186,43 @@
         });
       }
 
-      // Calcular el punto de reset (50% del contenido total)
+      // Calcular el punto de reset (después de las tarjetas originales)
+      const originalCards = cards.length;
+      const originalWidth = originalCards * cardWidth;
       const totalCards = track.children.length;
-      const halfPoint = totalCards / 2;
-      const scrollDistance = halfPoint * cardWidth;
 
-      // Aplicar la animación CSS con la distancia correcta
+      // Aplicar width total
       track.style.width = (totalCards * cardWidth) + 'px';
-      track.style.animation = `scrollOffersInfinite ${totalCards * 30000 / halfPoint}ms linear infinite`;
 
-      // Crear animación dinámica que se resetea en el punto medio
-      const styleSheet = document.createElement('style');
-      styleSheet.textContent = `
-        @keyframes scrollOffersInfinite {
-          0% { transform: translateX(0); }
-          100% { transform: translateX(-${scrollDistance}px); }
+      // Loop infinito con JavaScript para seamless
+      let currentPosition = 0;
+      let lastTime = 0;
+      const speed = cardWidth / 21000; // píxeles por ms, 30% más rápido
+      let offersPaused = false;
+      let animationId = null;
+
+      function animateOffers(time) {
+        if (offersPaused) {
+          animationId = requestAnimationFrame(animateOffers);
+          return;
         }
-      `;
-      document.head.appendChild(styleSheet);
+
+        if (time - lastTime >= 16) { // ~60fps
+          currentPosition += speed * (time - lastTime);
+
+          // Reset invisible cuando llegue al final de originales
+          if (currentPosition >= originalWidth) {
+            currentPosition = 0;
+          }
+
+          track.style.transform = `translate3d(${-currentPosition}px, 0, 0)`;
+          lastTime = time;
+        }
+        animationId = requestAnimationFrame(animateOffers);
+      }
+
+      // Iniciar animación
+      animationId = requestAnimationFrame(animateOffers);
 
       // ============================================
       // DRAG TO SCROLL PARA OFERTAS ESPECIALES
@@ -2221,56 +2240,7 @@
 
         // Función para reanudar la animación automática
         function resumeOffersAnimation() {
-          if (offersPaused) {
-            // Siempre intentamos reanudar, sin importar si tenemos la animación guardada
-            const computedStyle = window.getComputedStyle(track);
-            const transform = computedStyle.transform;
-            let currentPosition = 0;
-            
-            if (transform && transform !== 'none') {
-              const matrix = transform.split('(')[1].split(')')[0].split(',');
-              currentPosition = parseFloat(matrix[4]) || 0;
-            }
-            
-            // Intentar usar la animación guardada o buscar la animación del stylesheet
-            if (!offersOriginalAnimation) {
-              // Buscar la animación en el stylesheet dinámico
-              const styleSheets = document.styleSheets;
-              for (let i = 0; i < styleSheets.length; i++) {
-                try {
-                  const rules = styleSheets[i].cssRules || styleSheets[i].rules;
-                  for (let j = 0; j < rules.length; j++) {
-                    if (rules[j].type === CSSRule.KEYFRAMES_RULE && rules[j].name === 'scrollOffersInfinite') {
-                      offersOriginalAnimation = `scrollOffersInfinite ${rules[j].cssText.match(/\d+ms/)[0]} linear infinite`;
-                      break;
-                    }
-                  }
-                } catch (e) {}
-              }
-            }
-            
-            // Reiniciar la animación
-            track.style.animation = 'none';
-            track.offsetHeight; // Trigger reflow
-            track.style.transform = `translateX(${currentPosition}px)`;
-            
-            if (offersOriginalAnimation) {
-              track.style.animation = offersOriginalAnimation;
-              track.style.animationPlayState = 'running';
-            } else {
-              // Si no tenemos la animación guardada, recrear desde el stylesheet
-              const style = document.createElement('style');
-              style.textContent = `@keyframes scrollOffersInfinite {
-                0% { transform: translateX(0); }
-                100% { transform: translateX(-50%); }
-              }`;
-              document.head.appendChild(style);
-              track.style.animation = 'scrollOffersInfinite 30000ms linear infinite';
-              track.style.animationPlayState = 'running';
-            }
-            
-            offersPaused = false;
-          }
+          offersPaused = false;
         }
 
         // Mouse events
@@ -2280,26 +2250,19 @@
           carousel.classList.add('dragging');
           startX = e.pageX - carousel.offsetLeft;
           scrollLeft = carousel.scrollLeft;
-          
-          // Pausar animación automática al comenzar a arrastrar
-          if (!offersPaused) {
-            offersPaused = true;
-            if (!offersOriginalAnimation && track.style.animation) {
-              offersOriginalAnimation = track.style.animation;
-            }
-            track.style.animationPlayState = 'paused';
-            track.style.animation = 'none';
-          }
+
+          // Pausar animación automática
+          offersPaused = true;
         });
 
         carousel.addEventListener('mouseleave', () => {
           isDown = false;
           isDragging = false;
           carousel.classList.remove('dragging');
-          
+
           // Reanudar animación después de 1.5 segundos
           setTimeout(() => {
-            if (!isDragging && offersPaused) {
+            if (!isDragging) {
               resumeOffersAnimation();
             }
           }, 1500);
@@ -2309,10 +2272,10 @@
           isDown = false;
           isDragging = false;
           carousel.classList.remove('dragging');
-          
+
           // Reanudar después de 1.5 segundos de pausa
           setTimeout(() => {
-            if (!isDragging && offersPaused) {
+            if (!isDragging) {
               resumeOffersAnimation();
             }
           }, 1500);
@@ -2334,16 +2297,9 @@
         carousel.addEventListener('touchstart', (e) => {
           touchStartX = e.touches[0].pageX - carousel.offsetLeft;
           touchScrollLeft = carousel.scrollLeft;
-          
+
           // Pausar animación al tocar
-          if (!offersPaused) {
-            offersPaused = true;
-            if (!offersOriginalAnimation && track.style.animation) {
-              offersOriginalAnimation = track.style.animation;
-            }
-            track.style.animationPlayState = 'paused';
-            track.style.animation = 'none';
-          }
+          offersPaused = true;
         }, { passive: true });
 
         carousel.addEventListener('touchmove', (e) => {
