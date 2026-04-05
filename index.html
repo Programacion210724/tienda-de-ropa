@@ -975,6 +975,57 @@
       scroll-behavior: smooth;
     }
 
+    /* Drag to Scroll para Carruseles del Catálogo */
+    .catalog-row .catalog-carousel {
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+
+    .catalog-row .catalog-carousel:active {
+      cursor: grabbing;
+    }
+
+    .catalog-row .catalog-carousel.dragging {
+      cursor: grabbing;
+    }
+
+    /* Para dispositivos táctiles en catálogo */
+    .catalog-row .catalog-carousel {
+      -webkit-overflow-scrolling: touch;
+      scroll-behavior: smooth;
+    }
+
+    /* Modo búsqueda: Grid layout para carruseles */
+    .catalog-row.search-active .catalog-carousel {
+      overflow: visible;
+    }
+
+    .catalog-row.search-active .catalog-track {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      transform: none !important;
+      animation: none !important;
+    }
+
+    /* Responsive para grid en búsqueda */
+    @media (max-width: 768px) {
+      .catalog-row.search-active .catalog-track {
+        justify-content: center;
+      }
+      .catalog-row.search-active .card {
+        width: calc(50% - 7px); /* 2 columnas en móvil */
+        max-width: none;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .catalog-row.search-active .card {
+        width: 100%; /* 1 columna en móvil pequeño */
+      }
+    }
+
     /* Mostrar botones de navegación en ofertas especiales */
     .offers-section .row-prev,
     .offers-section .row-next {
@@ -1593,20 +1644,27 @@
 
     // Función de búsqueda de productos
     function filtrarProductos(textoBusqueda) {
-      alert('Buscando: ' + textoBusqueda);
       console.log("Buscando:", textoBusqueda);
       const termino = textoBusqueda.toLowerCase().trim();
       const suggestionsBox = document.getElementById('suggestionsBox');
-      
+
+      // Toggle modo búsqueda en carruseles
+      const catalogRows = document.querySelectorAll('.catalog-row');
+      if (termino.length > 0) {
+        catalogRows.forEach(row => row.classList.add('search-active'));
+      } else {
+        catalogRows.forEach(row => row.classList.remove('search-active'));
+      }
+
       // Buscar tanto .producto-item como .card para compatibilidad
       let productos = document.querySelectorAll('.producto-item');
       console.log("Productos .producto-item encontrados:", productos.length);
-      
+
       if (productos.length === 0) {
         productos = document.querySelectorAll('.card');
         console.log("Productos .card encontrados:", productos.length);
       }
-      
+
       let tieneResultados = false;
       let sugerencias = [];
 
@@ -1618,9 +1676,9 @@
         const altImagen = imagen ? imagen.alt.toLowerCase() : '';
         console.log("Producto:", nombre, "| Alt:", altImagen);
 
-        if (nombre.includes(termino) || altImagen.includes(termino)) {
+        if (termino.length === 0 || nombre.includes(termino) || altImagen.includes(termino)) {
           producto.style.display = '';
-          tieneResultados = true;
+          if (termino.length > 0) tieneResultados = true;
           // Agregar a sugerencias
           if (sugerencias.length < 8) {
             const imgSrc = imagen ? imagen.src : '';
@@ -1631,9 +1689,9 @@
           producto.style.display = 'none';
         }
       });
-      
+
       console.log("Tiene resultados:", tieneResultados);
-      
+
       // Mostrar sugerencias
       if (termino.length > 0 && sugerencias.length > 0) {
         let htmlSugerencias = '';
@@ -2210,6 +2268,138 @@
           }, 1500);
         });
       })();
+
+      // ============================================
+      // DRAG TO SCROLL PARA CARRUSELES DEL CATÁLOGO
+      // ============================================
+      function applyDragToCarousel(carousel) {
+        if (!carousel) return;
+
+        let isDown = false;
+        let startX;
+        let scrollLeft;
+        let isDragging = false;
+        let touchStartX = 0;
+        let touchScrollLeft = 0;
+        let lastMoveTime = 0;
+        let lastMoveX = 0;
+        let velocity = 0;
+        let animationId = null;
+
+        // Función para decelerar el scroll (inercia)
+        function decelerate() {
+          if (Math.abs(velocity) < 0.1) {
+            velocity = 0;
+            if (animationId) {
+              cancelAnimationFrame(animationId);
+              animationId = null;
+            }
+            return;
+          }
+
+          carousel.scrollLeft += velocity;
+          velocity *= 0.95; // Factor de deceleración
+          animationId = requestAnimationFrame(decelerate);
+        }
+
+        // Mouse events
+        carousel.addEventListener('mousedown', (e) => {
+          isDown = true;
+          isDragging = true;
+          carousel.classList.add('dragging');
+          startX = e.pageX - carousel.offsetLeft;
+          scrollLeft = carousel.scrollLeft;
+          lastMoveTime = Date.now();
+          lastMoveX = startX;
+          velocity = 0;
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
+        });
+
+        carousel.addEventListener('mouseleave', () => {
+          if (isDown) {
+            isDown = false;
+            isDragging = false;
+            carousel.classList.remove('dragging');
+            if (Math.abs(velocity) > 0.5) {
+              animationId = requestAnimationFrame(decelerate);
+            }
+          }
+        });
+
+        carousel.addEventListener('mouseup', () => {
+          isDown = false;
+          isDragging = false;
+          carousel.classList.remove('dragging');
+          if (Math.abs(velocity) > 0.5) {
+            animationId = requestAnimationFrame(decelerate);
+          }
+        });
+
+        carousel.addEventListener('mousemove', (e) => {
+          if (!isDown) return;
+          e.preventDefault();
+
+          const x = e.pageX - carousel.offsetLeft;
+          const walk = (x - startX) * 2;
+          carousel.scrollLeft = scrollLeft - walk;
+
+          // Calcular velocidad
+          const now = Date.now();
+          const timeDiff = now - lastMoveTime;
+          if (timeDiff > 0) {
+            const distance = x - lastMoveX;
+            velocity = distance / timeDiff * 10; // Ajustar factor
+          }
+          lastMoveTime = now;
+          lastMoveX = x;
+        });
+
+        // Touch events
+        carousel.addEventListener('touchstart', (e) => {
+          touchStartX = e.touches[0].pageX - carousel.offsetLeft;
+          touchScrollLeft = carousel.scrollLeft;
+          lastMoveTime = Date.now();
+          lastMoveX = touchStartX;
+          velocity = 0;
+          if (animationId) {
+            cancelAnimationFrame(animationId);
+            animationId = null;
+          }
+        }, { passive: true });
+
+        carousel.addEventListener('touchmove', (e) => {
+          const x = e.touches[0].pageX - carousel.offsetLeft;
+          const walk = (x - touchStartX) * 2;
+          carousel.scrollLeft = touchScrollLeft - walk;
+
+          // Calcular velocidad
+          const now = Date.now();
+          const timeDiff = now - lastMoveTime;
+          if (timeDiff > 0) {
+            const distance = x - lastMoveX;
+            velocity = distance / timeDiff * 10;
+          }
+          lastMoveTime = now;
+          lastMoveX = x;
+        }, { passive: true });
+
+        carousel.addEventListener('touchend', () => {
+          if (Math.abs(velocity) > 0.5) {
+            animationId = requestAnimationFrame(decelerate);
+          }
+        });
+      }
+
+      // Aplicar drag a los carruseles del catálogo
+      const catalogCarousels = document.querySelectorAll('.catalog-row .catalog-carousel');
+      catalogCarousels.forEach(carousel => {
+        if (!carousel.classList.contains('offers-carousel')) { // Evitar el de ofertas que ya tiene lógica
+          applyDragToCarousel(carousel);
+        }
+      });
 
       // Asignar eventos a los botones clonados
       assignWhatsAppEvents();
