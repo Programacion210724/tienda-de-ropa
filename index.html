@@ -311,7 +311,7 @@
     /* Cards grid */
     .grid{
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
       gap: 14px;
     }
     /* Diseño Responsivo */
@@ -350,6 +350,15 @@
         width: 100%;
       }
     }
+
+    /* Tablet y Laptop pequena - 2 productos */
+    @media (min-width: 769px) and (max-width: 1024px) {
+      .grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+      }
+    }
+
     @media (max-width: 480px) {
       .grid {
         grid-template-columns: 1fr;
@@ -419,20 +428,51 @@
       padding: 14px;
     }
     .price{
-      display:flex;
-      align-items:center;
+      display: flex;
+      align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 6px;
       margin-top: 8px;
-      color: var(--muted);
-      font-size: 14px;
+      width: 100%;
+      min-width: 0;
+      overflow: hidden;
+    }
+    .price > span:first-child {
+      color: var(--text);
+      font-size: 15px;
+      font-weight: 600;
+      flex-shrink: 1;
+    }
+    .price .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .price .tag.oferta-style {
+      background: #f97316;
+      color: white;
+      border-color: #f97316;
+      font-weight: 700;
     }
     /* Precio con descuento - coherencia de ofertas */
     .price.has-offer {
       display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 4px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+    .price.has-offer .price-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
     .price.has-offer .current-price {
       color: #22c55e;
@@ -443,6 +483,9 @@
       color: var(--muted);
       font-size: 12px;
       text-decoration: line-through;
+    }
+    .price.has-offer .badge-offer {
+      margin-left: auto;
     }
     .price-tag {
       display: inline-flex;
@@ -460,22 +503,34 @@
       text-decoration: line-through;
     }
     .badge-offer {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       background: #ef4444;
       color: white;
       padding: 4px 8px;
       border-radius: 6px;
       font-size: 11px;
       font-weight: 700;
-      margin-left: 8px;
     }
-    .tag{
+.tag{
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
       font-size: 12px;
-      padding: 6px 10px;
+      padding: 4px 10px;
       border-radius: 999px;
       border: 1px solid var(--border);
       background: rgba(255,255,255,.04);
       color: var(--text);
+    }
+    .tag.oferta-style {
+      background: #f97316;
+      color: white;
+      border-color: #f97316;
+      font-weight: 700;
+    }
+    .tag:not(:first-child) {
+      margin-left: auto;
     }
     /* Botón WhatsApp en tarjetas del catálogo */
     .card-whatsapp-btn {
@@ -839,6 +894,12 @@
       padding: 0;
     }
     
+    /* Grid de ofertas especiales - 2 productos por slide en PC */
+    .catalog-row .offers-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
     /* Responsive para carruseles de catálogo y ofertas - 1 imagen por slide en móvil */
     @media (max-width: 768px) {
       .catalog-row .catalog-grid {
@@ -883,7 +944,7 @@
     /* Responsive */
     @media (max-width: 900px){
       .hero-grid{ grid-template-columns: 1fr; }
-      .grid{ grid-template-columns: 1fr; }
+      .grid{ grid-template-columns: repeat(2, 1fr); }
       .contact{ grid-template-columns: 1fr; }
       nav{ justify-content: flex-start; }
     }
@@ -891,6 +952,7 @@
     /* Carrusel infinito automático de Ofertas Especiales */
     .offers-carousel {
       overflow: hidden;
+      overscroll-behavior: none;
       width: 100%;
       padding: 10px 0;
     }
@@ -1010,6 +1072,7 @@
       -webkit-overflow-scrolling: touch;
       scroll-behavior: smooth;
       scroll-snap-type: x proximity;
+      overscroll-behavior-x: contain;
     }
 
     .catalog-row .card {
@@ -1135,8 +1198,8 @@
             </div>
             
             <!-- Flechas de navegación -->
-            <button class="carousel-btn prev-btn" onclick="changeSlide(-1)">❮</button>
-            <button class="carousel-btn next-btn" onclick="changeSlide(1)">❯</button>
+            <button class="carousel-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+            <button class="carousel-btn next-btn" onclick="changeSlide(1)">›</button>
           </div>
         </div>
       </div>
@@ -1152,84 +1215,117 @@
         <span style="color: var(--text); font-size: 15px; font-weight: 600;">Recoger en tienda</span>
       </div>
     </div>
-    <section id="ofertas">
+<section id="ofertas">
       <div class="container">
         <div class="section-title">
           <h2>Ofertas Especiales</h2>
           <p>Promociones que no te puedes perder</p>
         </div>
-        <div class="catalog-row offers-section">
-          <h3>Ofertas</h3>
+        <div class="catalog-row offers-row">
+          <h3>Ofertas de la Semana</h3>
           <div class="carousel-wrapper">
-            <div class="catalog-carousel offers-carousel" id="offersCarousel">
-              <div class="offers-track" id="offersTrack">
-                <!-- Tarjeta 1: Playera Básica -->
-                <article class="offer-card">
-                  <img loading="lazy" decoding="async" src="img/playera basica.jpg" alt="Playera Básica" />
-                  <div class="offer-content">
-                    <strong>Playera Básica</strong>
-                    <div class="offer-prices">
-                      <span class="offer-price">$7.99</span>
-                      <span class="offer-old-price">$12.99</span>
-                    </div>
-                    <span class="offer-tag">¡Oferta Relámpago!</span>
-                    <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Playera%20Básica" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+            <button class="carousel-btn row-prev" onclick="changeRowSlide(3, -1)">‹</button>
+            <div class="catalog-carousel">
+              <div class="catalog-track" id="row-3">
+                <div class="catalog-slide">
+                  <div class="grid catalog-grid offers-grid">
+                    <article class="card">
+                      <img loading="lazy" decoding="async" src="img/playera basica.jpg" alt="Playera Básica" />
+                      <div class="content">
+                        <strong>Playera Básica</strong>
+                        <div class="price has-offer">
+                          <div class="price-row">
+                            <span class="current-price">$7.99</span>
+                            <span class="original-price">$12.99</span>
+                          </div>
+                          <span class="tag oferta-style">¡Oferta!</span>
+                        </div>
+                        <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Playera%20Básica" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
+                      </div>
+                    </article>
+                    <article class="card">
+                      <img loading="lazy" decoding="async" src="img/short deportivo .jpg" alt="Short Deportivo" />
+                      <div class="content">
+                        <strong>Short Deportivo</strong>
+                        <div class="price has-offer">
+                          <div class="price-row">
+                            <span class="current-price">$10.99</span>
+                            <span class="original-price">$15.99</span>
+                          </div>
+                          <span class="tag oferta-style">Liquidación</span>
+                        </div>
+                        <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Short%20Deportivo" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
+                      </div>
+                    </article>
                   </div>
-                </article>
-                <!-- Tarjeta 2: Short Deportivo -->
-                <article class="offer-card">
-                  <img loading="lazy" decoding="async" src="img/short deportivo .jpg" alt="Short Deportivo" />
-                  <div class="offer-content">
-                    <strong>Short Deportivo</strong>
-                    <div class="offer-prices">
-                      <span class="offer-price">$10.99</span>
-                      <span class="offer-old-price">$15.99</span>
-                    </div>
-                    <span class="offer-tag">Liquidación Verano</span>
-                    <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Short%20Deportivo" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                </div>
+                <div class="catalog-slide">
+                  <div class="grid catalog-grid offers-grid">
+                    <article class="card">
+                      <img loading="lazy" decoding="async" src="img/top depottivo.jpg" alt="Top Fitness" />
+                      <div class="content">
+                        <strong>Top Fitness</strong>
+                        <div class="price has-offer">
+                          <div class="price-row">
+                            <span class="current-price">$8.90</span>
+                            <span class="original-price">$15.00</span>
+                          </div>
+                          <span class="tag oferta-style">Precio Fábrica</span>
+                        </div>
+                        <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Top%20Fitness" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
+                      </div>
+                    </article>
+                    <article class="card">
+                      <img loading="lazy" decoding="async" src="img/polera cuello v.jpg" alt="Polera Cuello V" />
+                      <div class="content">
+                        <strong>Polera Cuello V</strong>
+                        <div class="price has-offer">
+                          <div class="price-row">
+                            <span class="current-price">$11.90</span>
+                            <span class="original-price">$18.99</span>
+                          </div>
+                          <span class="tag oferta-style">¡Oferta!</span>
+                        </div>
+                        <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Polera%20Cuello%20V" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
+                      </div>
+                    </article>
                   </div>
-                </article>
-                <!-- Tarjeta 3: Top Fitness -->
-                <article class="offer-card">
-                  <img loading="lazy" decoding="async" src="img/top depottivo.jpg" alt="Top Fitness" />
-                  <div class="offer-content">
-                    <strong>Top Fitness</strong>
-                    <div class="offer-prices">
-                      <span class="offer-price">$8.90</span>
-                      <span class="offer-old-price">$15.00</span>
-                    </div>
-                    <span class="offer-tag">Precio de Fábrica</span>
-                    <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Top%20Fitness" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                </div>
+                <div class="catalog-slide">
+                  <div class="grid catalog-grid offers-grid">
+                    <article class="card">
+                      <img loading="lazy" decoding="async" src="img/sudadera.jpg" alt="Sudadera" />
+                      <div class="content">
+                        <strong>Sudadera</strong>
+                        <div class="price has-offer">
+                          <div class="price-row">
+                            <span class="current-price">$14.99</span>
+                            <span class="original-price">$24.99</span>
+                          </div>
+                          <span class="tag oferta-style">Liquidación</span>
+                        </div>
+                        <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Sudadera" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
+                      </div>
+                    </article>
+                    <article class="card">
+                      <img loading="lazy" decoding="async" src="img/Jeans slim.jpg" alt="Jeans Slim" />
+                      <div class="content">
+                        <strong>Jeans Slim</strong>
+                        <div class="price has-offer">
+                          <div class="price-row">
+                            <span class="current-price">$19.99</span>
+                            <span class="original-price">$29.99</span>
+                          </div>
+                          <span class="tag oferta-style">Descuento</span>
+                        </div>
+                        <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Jeans%20Slim" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
+                      </div>
+                    </article>
                   </div>
-                </article>
-                <!-- Tarjeta 4: Polera Cuello V -->
-                <article class="offer-card">
-                  <img loading="lazy" decoding="async" src="img/polera cuello v.jpg" alt="Polera Cuello V" />
-                  <div class="offer-content">
-                    <strong>Polera Cuello V (Simple)</strong>
-                    <div class="offer-prices">
-                      <span class="offer-price">$11.90</span>
-                      <span class="offer-old-price">$18.99</span>
-                    </div>
-                    <span class="offer-tag">Último Stock</span>
-                    <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Polera%20Cuello%20V" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
-                  </div>
-                </article>
-                <!-- Tarjeta 5: Sudadera -->
-                <article class="offer-card">
-                  <img loading="lazy" decoding="async" src="img/sudadera.jpg" alt="Sudadera" />
-                  <div class="offer-content">
-                    <strong>Sudadera</strong>
-                    <div class="offer-prices">
-                      <span class="offer-price">$14.99</span>
-                      <span class="offer-old-price">$24.99</span>
-                    </div>
-                    <span class="offer-tag">Súper Promo</span>
-                    <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Sudadera" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
-                  </div>
-                </article>
+                </div>
               </div>
             </div>
+            <button class="carousel-btn row-next" onclick="changeRowSlide(3, 1)">›</button>
           </div>
         </div>
       </div>
@@ -1245,7 +1341,7 @@
           <div class="catalog-row">
             <h3>Playeras y Tops</h3>
             <div class="carousel-wrapper">
-              <button class="carousel-btn row-prev" onclick="changeRowSlide(0, -1)">❮</button>
+              <button class="carousel-btn row-prev" onclick="changeRowSlide(0, -1)">‹</button>
               <div class="catalog-carousel">
                 <div class="catalog-track" id="row-0">
                   <div class="catalog-slide">
@@ -1258,7 +1354,7 @@
                             <span>$12.99</span>
                             <span class="tag">Nuevo</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Playera%20Básica" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Playera%20Básica" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1269,7 +1365,7 @@
                             <span>$18.99</span>
                             <span class="tag">Clásico</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Polera%20Cuello%20V" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Polera%20Cuello%20V" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1280,7 +1376,7 @@
                             <span>$32.99</span>
                             <span class="tag">Elegante</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Camisa%20Formal" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Camisa%20Formal" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                     </div>
@@ -1295,7 +1391,7 @@
                             <span>$15.99</span>
                             <span class="tag">Trendy</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Playera%20Estampada" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Playera%20Estampada" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1306,7 +1402,7 @@
                             <span>$19.99</span>
                             <span class="tag">Temporada</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Camiseta%20Manga%20Larga" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Camiseta%20Manga%20Larga" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1317,14 +1413,14 @@
                             <span>$14.99</span>
                             <span class="tag">Fitness</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Top%20Deportivo" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Top%20Deportivo" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                     </div>
                   </div>
                 </div>
               </div>
-              <button class="carousel-btn row-next" onclick="changeRowSlide(0, 1)">❯</button>
+              <button class="carousel-btn row-next" onclick="changeRowSlide(0, 1)">›</button>
             </div>
           </div>
 
@@ -1332,7 +1428,7 @@
           <div class="catalog-row">
             <h3>Pantalones</h3>
             <div class="carousel-wrapper">
-              <button class="carousel-btn row-prev" onclick="changeRowSlide(1, -1)">❮</button>
+              <button class="carousel-btn row-prev" onclick="changeRowSlide(1, -1)">‹</button>
               <div class="catalog-carousel">
                 <div class="catalog-track" id="row-1">
                   <div class="catalog-slide">
@@ -1345,7 +1441,7 @@
                             <span>$29.99</span>
                             <span class="tag">Más vendido</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Jeans%20Slim" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Jeans%20Slim" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1356,7 +1452,7 @@
                             <span>$22.99</span>
                             <span class="tag">Casual</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Pantalón%20Cargo" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Pantalón%20Cargo" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1367,7 +1463,7 @@
                             <span>$15.99</span>
                             <span class="tag">Verano</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Short%20Deportivo" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Short%20Deportivo" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                     </div>
@@ -1382,7 +1478,7 @@
                             <span>$34.99</span>
                             <span class="tag">Clásico</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Jeans%20Classic" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Jeans%20Classic" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1393,7 +1489,7 @@
                             <span>$24.99</span>
                             <span class="tag">Cómodo</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Pantalón%20Jogger" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Pantalón%20Jogger" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1404,14 +1500,14 @@
                             <span>$27.99</span>
                             <span class="tag">Formal</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Pantalón%20Recto" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Pantalón%20Recto" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                     </div>
                   </div>
                 </div>
               </div>
-              <button class="carousel-btn row-next" onclick="changeRowSlide(1, 1)">❯</button>
+              <button class="carousel-btn row-next" onclick="changeRowSlide(1, 1)">›</button>
             </div>
           </div>
 
@@ -1419,7 +1515,7 @@
           <div class="catalog-row">
             <h3>Sudaderas y Chaquetas</h3>
             <div class="carousel-wrapper">
-              <button class="carousel-btn row-prev" onclick="changeRowSlide(2, -1)">❮</button>
+              <button class="carousel-btn row-prev" onclick="changeRowSlide(2, -1)">‹</button>
               <div class="catalog-carousel">
                 <div class="catalog-track" id="row-2">
                   <div class="catalog-slide">
@@ -1430,9 +1526,9 @@
                           <strong>Sudadera</strong>
                           <div class="price">
                             <span>$24.99</span>
-                            <span class="tag">Oferta</span>
+                            <span class="tag oferta-style">Oferta</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Sudadera" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Sudadera" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1443,7 +1539,7 @@
                             <span>$35.99</span>
                             <span class="tag">Tendencia</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Casaca%20Deportiva" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Casaca%20Deportiva" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1454,7 +1550,7 @@
                             <span>$28.99</span>
                             <span class="tag">Popular</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Chompa%20con%20capucha" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Chompa%20con%20capucha" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                     </div>
@@ -1469,7 +1565,7 @@
                             <span>$59.99</span>
                             <span class="tag">Premium</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Chaqueta%20de%20cuero" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Chaqueta%20de%20cuero" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1480,7 +1576,7 @@
                             <span>$26.99</span>
                             <span class="tag">Cómoda</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Sudadera%20con%20cierre" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Sudadera%20con%20cierre" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                       <article class="card">
@@ -1491,14 +1587,14 @@
                             <span>$22.99</span>
                             <span class="tag">Ligera</span>
                           </div>
-                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Chaleco%20acolchado" target="_blank" class="card-whatsapp-btn">💬 Pedir por WhatsApp</a>
+                          <a href="https://wa.me/51917198100?text=Hola,%20estoy%20interesado%20en%20Chaleco%20acolchado" target="_blank" class="card-whatsapp-btn"><span style="font-size: 18px;">💬</span> Pedir por WhatsApp</a>
                         </div>
                       </article>
                     </div>
                   </div>
                 </div>
               </div>
-              <button class="carousel-btn row-next" onclick="changeRowSlide(2, 1)">❯</button>
+              <button class="carousel-btn row-next" onclick="changeRowSlide(2, 1)">›</button>
             </div>
           </div>
         </div>
@@ -1529,7 +1625,7 @@
             </div>
           </div>
           <form id="pedidoForm">
-            <h3 style="margin-top:0;">Realize su pedido en este formulario😊</h3>
+            <h3 style="margin-top:0;">Realize su pedido en este formulario</h3>
             <label for="nombre">Nombre</label>
             <input id="nombre" name="nombre" type="text" placeholder="Tu nombre" required />
 
@@ -1874,7 +1970,39 @@
 
     // Catálogo rows carousel functionality
     const rowSlides = [0, 0, 0, 0]; // Track position for each row (now 4 rows including ofertas)
-    const totalRowSlides = [2, 2, 2, 2]; // Slides fixed in HTML: [Playeras, Pantalones, Sudaderas, Ofertas]
+    const totalRowSlides = [2, 2, 2, 3]; // Slides fixed in HTML: [Playeras, Pantalones, Sudaderas, Ofertas]
+    
+    // Auto-rotate para carrusel de ofertas cada 5 segundos
+    let offersAutoRotateInterval;
+    let offersAutoRotatePaused = false;
+    
+    function autoRotateOffers() {
+      if (!offersAutoRotatePaused) {
+        changeRowSlide(3, 1);
+      }
+    }
+    
+    // Iniciar auto-rotate del carrusel de ofertas cada 5 segundos
+    offersAutoRotateInterval = setInterval(autoRotateOffers, 5000);
+    
+    // Pausar auto-rotate cuando el usuario interactúa con el carrusel de ofertas
+    const offersCarousel = document.querySelector('.offers-row .catalog-carousel');
+    if (offersCarousel) {
+      offersCarousel.addEventListener('mouseenter', () => {
+        offersAutoRotatePaused = true;
+      });
+      offersCarousel.addEventListener('mouseleave', () => {
+        offersAutoRotatePaused = false;
+      });
+      offersCarousel.addEventListener('touchstart', () => {
+        offersAutoRotatePaused = true;
+      });
+      offersCarousel.addEventListener('touchend', () => {
+        setTimeout(() => {
+          offersAutoRotatePaused = false;
+        }, 5000);
+      });
+    }
     
     // Función para reconstruir carrusel para móvil (1 producto por slide)
     function rebuildCarouselForMobile() {
@@ -1982,7 +2110,7 @@
 
         if (result.success) {
           resultado.className = "alert alert-success";
-          resultado.textContent = "😉 Listo: tu pedido fue enviado. Te contactaremos pronto.";
+          resultado.textContent = "Listo: tu pedido fue enviado. Te contactaremos pronto.";
           form.reset();
         } else {
           resultado.className = "alert alert-error";
@@ -2172,57 +2300,35 @@
       const track = document.querySelector('.offers-track');
       if (!track) return;
 
-      // Clonar tarjetas hasta que el contenido sea al menos 2.5x el ancho de la ventana
+      // Clonar todas las tarjetas originales una vez más para bucle infinito
       const cards = Array.from(track.children);
       const cardWidth = cards[0]?.offsetWidth + 24 || 292; // 280px + 12px margin each side
-      const viewportWidth = window.innerWidth;
-      const minCards = Math.ceil(viewportWidth / cardWidth * 2.5);
-      
-      // Clonar hasta alcanzar el mínimo necesario
-      while (track.children.length < minCards) {
-        cards.forEach(card => {
-          const clone = card.cloneNode(true);
-          track.appendChild(clone);
-        });
-      }
+
+      // Clonar exactamente las mismas tarjetas al final
+      cards.forEach(card => {
+        const clone = card.cloneNode(true);
+        track.appendChild(clone);
+      });
 
       // Calcular el punto de reset (después de las tarjetas originales)
       const originalCards = cards.length;
       const originalWidth = originalCards * cardWidth;
-      const totalCards = track.children.length;
+      const totalCards = track.children.length; // Ahora = originalCards * 2
 
-      // Aplicar width total
-      track.style.width = (totalCards * cardWidth) + 'px';
+      // Aplicar width 200% (originales + clones)
+      track.style.width = '200%';
 
-      // Loop infinito con JavaScript para seamless
-      let currentPosition = 0;
-      let lastTime = 0;
-      const speed = cardWidth / 21000; // píxeles por ms, 30% más rápido
-      let offersPaused = false;
-      let animationId = null;
-
-      function animateOffers(time) {
-        if (offersPaused) {
-          animationId = requestAnimationFrame(animateOffers);
-          return;
+      // Animación CSS infinita
+      const styleSheet = document.createElement('style');
+      styleSheet.textContent = `
+        @keyframes scrollOffersInfinite {
+          0% { transform: translateX(0); }
+          100% { transform: translateX(-50%); }
         }
+      `;
+      document.head.appendChild(styleSheet);
 
-        if (time - lastTime >= 16) { // ~60fps
-          currentPosition += speed * (time - lastTime);
-
-          // Reset invisible cuando llegue al final de originales
-          if (currentPosition >= originalWidth) {
-            currentPosition = 0;
-          }
-
-          track.style.transform = `translate3d(${-currentPosition}px, 0, 0)`;
-          lastTime = time;
-        }
-        animationId = requestAnimationFrame(animateOffers);
-      }
-
-      // Iniciar animación
-      animationId = requestAnimationFrame(animateOffers);
+      track.style.animation = 'scrollOffersInfinite 21s linear infinite';
 
       // ============================================
       // DRAG TO SCROLL PARA OFERTAS ESPECIALES
@@ -2240,7 +2346,7 @@
 
         // Función para reanudar la animación automática
         function resumeOffersAnimation() {
-          offersPaused = false;
+          track.style.animationPlayState = 'running';
         }
 
         // Mouse events
@@ -2252,7 +2358,7 @@
           scrollLeft = carousel.scrollLeft;
 
           // Pausar animación automática
-          offersPaused = true;
+          track.style.animationPlayState = 'paused';
         });
 
         carousel.addEventListener('mouseleave', () => {
@@ -2260,12 +2366,12 @@
           isDragging = false;
           carousel.classList.remove('dragging');
 
-          // Reanudar animación después de 1.5 segundos
+          // Reanudar animación inmediatamente
           setTimeout(() => {
             if (!isDragging) {
               resumeOffersAnimation();
             }
-          }, 1500);
+          }, 0);
         });
 
         carousel.addEventListener('mouseup', () => {
@@ -2273,12 +2379,12 @@
           isDragging = false;
           carousel.classList.remove('dragging');
 
-          // Reanudar después de 1.5 segundos de pausa
+          // Reanudar inmediatamente
           setTimeout(() => {
             if (!isDragging) {
               resumeOffersAnimation();
             }
-          }, 1500);
+          }, 0);
         });
 
         carousel.addEventListener('mousemove', (e) => {
@@ -2299,7 +2405,7 @@
           touchScrollLeft = carousel.scrollLeft;
 
           // Pausar animación al tocar
-          offersPaused = true;
+          track.style.animationPlayState = 'paused';
         }, { passive: true });
 
         carousel.addEventListener('touchmove', (e) => {
@@ -2309,12 +2415,10 @@
         }, { passive: true });
 
         carousel.addEventListener('touchend', () => {
-          // Reanudar después de 1.5 segundos
+          // Reanudar inmediatamente
           setTimeout(() => {
-            if (offersPaused) {
-              resumeOffersAnimation();
-            }
-          }, 1500);
+            resumeOffersAnimation();
+          }, 0);
         });
       })();
 
@@ -2568,4 +2672,10 @@
   </script>
 </body>
 </html>
+
+
+
+
+
+
 
